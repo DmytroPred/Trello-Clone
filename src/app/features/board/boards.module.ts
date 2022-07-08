@@ -7,12 +7,14 @@ import { AddBoardModalComponent } from './pages/add-board-modal/add-board-modal.
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatInputModule } from '@angular/material/input'
-import { MatButtonModule } from '@angular/material/button'
+import { MatButtonModule } from '@angular/material/button';
+import { BoardComponent } from './pages/board/board.component'
 
 @NgModule({
   declarations: [
     BoardsComponent,
-    AddBoardModalComponent
+    AddBoardModalComponent,
+    BoardComponent
   ],
   imports: [
     CommonModule,
@@ -22,6 +24,7 @@ import { MatButtonModule } from '@angular/material/button'
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule
-  ]
+  ],
+  providers: []
 })
 export class BoardsModule { }
