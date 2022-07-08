@@ -1,0 +1,34 @@
+<!-- <p>Board Name {{ currentBoard.name }}</p>
+<p>Board id {{ currentBoard.id }}</p> -->
+<div class="columns">
+  <div class="columns__column" *ngFor="let column of currentBoard.columns">
+    <p class="title">{{ column.name }}</p>
+  </div>
+  <div class="columns__add-new">
+    <div class="columns__add-new__column-btn" *ngIf="!addNewListToggle; else form">
+      <a (click)="openForm()">Add new column</a>
+    </div>
+    <ng-template #form>
+      <form (ngSubmit)="addNewColumn()" class="columns__add-new__column-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Column name</mat-label>
+          <input matInput [formControl]="columnName" type="text" />
+          <mat-error *ngIf="columnName.hasError('required')">
+            Name is <span>required</span>
+          </mat-error>
+        </mat-form-field>
+        <div class="columns__add-new__column-form__buttons">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="columnName.invalid"
+          >
+            Create
+          </button>
+          <button mat-raised-button (click)="cancelAddingColumn()">Cancel</button>
+        </div>
+      </form>
+    </ng-template>
+  </div>
+</div>

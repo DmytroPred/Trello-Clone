@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AddBoardModalComponent } from './pages/add-board-modal/add-board-modal.component';
+import { BoardComponent } from './pages/board/board.component';
 import { BoardsComponent } from './pages/boards/boards.component';
 
 const routes: Routes = [
-  { path: '', component: BoardsComponent }
+  { path: '', component: BoardsComponent },
+  { path: 'board/:id', component: BoardComponent}
 ];
 
 @NgModule({

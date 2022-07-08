@@ -1,0 +1,34 @@
+.columns {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, max-content));
+  justify-content: center;
+  margin: 2vw 2vw 0 2vw;
+  .columns__column {
+    cursor: pointer;
+    background-color: #091e420a;
+  }
+  .columns__add-new__column-btn {
+    cursor: pointer;
+    background-color: #091e420a;
+  }
+  .columns__add-new__column-form {
+    padding: 0.5rem;
+    border: solid #091e420a 2px;
+    border-radius: 3px;
+
+    box-shadow: 8px 10px 13px 2px whitesmoke;
+    .columns__add-new__column-form__buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1em;
+    }
+  }
+}
+
+form {
+  position: absolute;
+}
+// .title {
+//   background-color: #6475940a;
+// }
