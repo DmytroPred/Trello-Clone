@@ -5,7 +5,7 @@
       <ul class="boards-list">
         <li *ngFor="let board of boards; let i = index">
           <div class="board-tile">
-            <a [routerLink]="['board/', i + 1]">{{ board.name }} {{ board.id }}</a>
+            <a [routerLink]="['board/', i + 1]">{{ board.name }}</a>
           </div>
         </li>
         <li>

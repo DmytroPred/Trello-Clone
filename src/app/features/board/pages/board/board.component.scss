@@ -1,34 +1,149 @@
-.columns {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(190px, max-content));
-  justify-content: center;
-  margin: 2vw 2vw 0 2vw;
-  .columns__column {
-    cursor: pointer;
-    background-color: #091e420a;
-  }
-  .columns__add-new__column-btn {
-    cursor: pointer;
-    background-color: #091e420a;
-  }
-  .columns__add-new__column-form {
-    padding: 0.5rem;
-    border: solid #091e420a 2px;
-    border-radius: 3px;
+$grey-background-color: #5e6c84;
+$hover-background-color: rgba(94, 108, 132, 0.1);
 
-    box-shadow: 8px 10px 13px 2px whitesmoke;
-    .columns__add-new__column-form__buttons {
+.columns {
+  height: 80vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  margin: 2vw 2vw 0 2vw;
+
+  .columns__column,
+  .columns__add-new {
+    display: inline-block;
+    margin: 0 4px;
+    vertical-align: top;
+    height: 100%;
+    border-radius: 3px;
+    .columns__add-new__column-btn {
+      background-color: #ebecf0;
+      border-radius: 3px;
+      a {
+        display: block;
+        cursor: pointer;
+        color: $grey-background-color;
+        flex: 1 0 auto;
+        padding: 6px 16px;
+      }
+      a:hover {
+        background-color: $hover-background-color;
+        border-radius: 3px;
+      }
+    }
+    .columns__add-new__column-form {
       display: flex;
+      flex-direction: column;
       justify-content: center;
-      gap: 1em;
+
+      padding: 0.5rem;
+      border: solid #091e420a 2px;
+      border-radius: 3px;
+      box-shadow: 8px 10px 13px 2px #091e420a;
+      .columns__add-new__column-form__buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1em;
+      }
+    }
+  }
+
+  .list-wrapper__list {
+    width: 272px;
+    display: flex;
+    flex-direction: column;
+    background-color: #ebecf0;
+    max-height: 100%;
+    border-radius: 3px;
+    position: relative;
+    hr {
+      margin: 0;
+      margin-bottom: 5px;
+    }
+    .task-placeholder {
+      min-height: 1em;
+    }
+    .list-wrapper__list__header, .list-wrapper__list__task, .list-wrapper__list__form {
+      flex: 0 0 auto;
+      min-height: 20px;
+      padding: 2px 8px;
+      p {
+        font-weight: 600;
+        padding: 4px 8px;
+        margin: 0;
+        vertical-align: center;
+      }
+
+      a, input {
+        text-decoration: none;
+        cursor: pointer;
+        display: block;
+        padding: 4px 8px;
+        margin: 0 8px;
+      }
+        a:hover {
+        background-color: $hover-background-color;
+        border-radius: 3px;
+      }
+    }
+    .list-wrapper__list__form {
+      display:flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      input {
+        border-radius: 4px;
+      }
+      .mat-button {
+        min-width: 30px;
+        padding: 0;
+      }
+      button:not([disabled]) {
+        color: white;
+        background-color: #3f51b5;
+      }
+      button:not([disabled]):hover {
+        background-color: rgb(63, 81, 181, .7);
+      }
+    }
+    .list-wrapper__task-composer {
+      padding: 0 8px 10px;
+      a {
+        display: block;
+        color: $grey-background-color;
+        flex: 1 0 auto;
+        cursor: pointer;
+        padding: 4px 8px;
+        margin: 2px 8px;
+        text-decoration: none;
+      }
+      a:hover {
+        background-color: $hover-background-color;
+        border-radius: 3px;
+      }
     }
   }
 }
 
-form {
-  position: absolute;
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
-// .title {
-//   background-color: #6475940a;
-// }
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+.cdk-drag-placeholder {
+  background-color: $hover-background-color;
+}
+.cdk-drag-preview {
+  * {
+    display: none;
+  }
+  background-color: $hover-background-color;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+@media screen and (max-width: 990px) {
+  .columns {
+    height: 70vh;
+  }
+}
