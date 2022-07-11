@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BoardsMock } from '../../mocks/boards.mocks';
 import { IBoard } from 'src/app/core/models/Board';
-import { AddBoardModalComponent } from '../add-board-modal/add-board-modal.component';
+import { AddBoardModalComponent } from '../boards/add-board-modal/add-board-modal.component';
 
 @Component({
   selector: 'app-boards',
@@ -10,7 +10,7 @@ import { AddBoardModalComponent } from '../add-board-modal/add-board-modal.compo
   styleUrls: ['./boards.component.scss'],
 })
 export class BoardsComponent implements OnInit {
-  boards!: IBoard[]
+  boards!: IBoard[];
 
   constructor(
     public dialog: MatDialog
@@ -27,20 +27,14 @@ export class BoardsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((boardName) => {
       if (boardName) {
-        // boardName = Object.assign({id: `${this.boards.length}`}, {...boardName});
         boardName = {id:`${this.boards.length}`, name: boardName, columns: []};
-        // boardName = {id:`${BoardsMock.length}`, name: boardName};
         this.addBoard(boardName);
       }
     });
   }
 
   addBoard(createdBoard: IBoard) {
-    // this.boards.push(createdBoard);
-
-    // push data to data base
-    // this.boards.push(BoardsMock);
+    // push data to data base(Mocked data yet)
     BoardsMock.push(createdBoard);
-    console.log(BoardsMock);
   }
 }

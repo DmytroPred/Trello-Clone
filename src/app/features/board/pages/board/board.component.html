@@ -1,34 +1,103 @@
-<!-- <p>Board Name {{ currentBoard.name }}</p>
-<p>Board id {{ currentBoard.id }}</p> -->
-<div class="columns">
-  <div class="columns__column" *ngFor="let column of currentBoard.columns">
-    <p class="title">{{ column.name }}</p>
-  </div>
-  <div class="columns__add-new">
-    <div class="columns__add-new__column-btn" *ngIf="!addNewListToggle; else form">
-      <a (click)="openForm()">Add new column</a>
-    </div>
-    <ng-template #form>
-      <form (ngSubmit)="addNewColumn()" class="columns__add-new__column-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Column name</mat-label>
-          <input matInput [formControl]="columnName" type="text" />
-          <mat-error *ngIf="columnName.hasError('required')">
-            Name is <span>required</span>
-          </mat-error>
-        </mat-form-field>
-        <div class="columns__add-new__column-form__buttons">
-          <button
-            mat-raised-button
-            color="primary"
-            type="submit"
-            [disabled]="columnName.invalid"
+<!-- Drop list for columns -->
+<div
+  cdkDropList
+  cdkDropListOrientation="horizontal"
+  class="columns"
+  (cdkDropListDropped)="dropColumn($event)"
+>
+  <!-- Drop list group for tasks -->
+  <div cdkDropListGroup>
+    <div
+      class="columns__column"
+      *ngFor="let column of currentBoard.columns; let i = index"
+    >
+      <!-- Drag column -->
+      <div class="list-wrapper" cdkDrag>
+        <div class="list-wrapper__list">
+          <div class="list-wrapper__list__header">
+            <p class="title">{{ column.name }}</p>
+          </div>
+          <hr />
+          <!-- Drop list for task -->
+          <div
+            class="task-placeholder"
+            cdkDropList
+            [cdkDropListData]="column.tasks"
+            (cdkDropListDropped)="dropTask($event, i)"
           >
-            Create
-          </button>
-          <button mat-raised-button (click)="cancelAddingColumn()">Cancel</button>
+            <!-- Drag task -->
+            <div
+              class="list-wrapper__list__task"
+              *ngFor="let task of column.tasks; let i = index"
+              cdkDrag
+            >
+              <div>
+                <div>
+                  <a>{{ task.name }}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <form
+            (ngSubmit)="addNewTask(i)"
+            class="list-wrapper__list__form"
+            *ngIf="addNewTaskToggle && i === viewIndex"
+          >
+            <input placeholder="name" [formControl]="taskName" />
+            <button
+              mat-button
+              color="primary"
+              type="submit"
+              [disabled]="taskName.invalid"
+            >
+              &#43;
+            </button>
+          </form>
+
+          <div class="list-wrapper__task-composer" (click)="openTaskForm(i)">
+            <a *ngIf="!addNewTaskToggle || i !== viewIndex; else cancel"
+              ><span>&#43;</span>&nbsp;<span>Add new task</span></a
+            >
+            <ng-template #cancel>
+              <a #cancel>&nbsp;&nbsp;<span>Cancel adding new task</span></a>
+            </ng-template>
+          </div>
         </div>
-      </form>
-    </ng-template>
+      </div>
+    </div>
+    <div class="columns__add-new">
+      <div
+        class="columns__add-new__column-btn"
+        *ngIf="!addNewColumnToggle; else form"
+      >
+        <a (click)="openColumnForm()"
+          ><span>&#43;</span>&nbsp;<span>Add new column</span></a
+        >
+      </div>
+      <ng-template #form>
+        <form (ngSubmit)="addNewColumn()" class="columns__add-new__column-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Column name</mat-label>
+            <input matInput [formControl]="columnName" type="text" />
+            <mat-error *ngIf="columnName.hasError('required')">
+              Name is <span>required</span>
+            </mat-error>
+          </mat-form-field>
+          <div class="columns__add-new__column-form__buttons">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="columnName.invalid"
+            >
+              Create
+            </button>
+            <button mat-raised-button (click)="cancelAddingColumn()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </ng-template>
+    </div>
   </div>
 </div>

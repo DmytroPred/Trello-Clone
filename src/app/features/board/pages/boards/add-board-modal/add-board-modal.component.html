@@ -1,7 +1,7 @@
 <form (ngSubmit)="addNewBoard()">
   <h2 mat-dialog-title>Add new board</h2>
   <mat-dialog-content class="container">
-    <mat-form-field class="container_name-form-field" appearamce="fill">
+    <mat-form-field class="container_name-form-field" appearance="outline">
       <mat-label>Name</mat-label>
       <input matInput [formControl]="boardName" type="text" />
       <mat-error *ngIf="boardName.hasError('required')">
@@ -10,7 +10,7 @@
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" type="submit" [disabled]="boardName.invalid">Add</button>
     <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-button type="submit" [disabled]="boardName.invalid">Add</button>
   </mat-dialog-actions>
 </form>
