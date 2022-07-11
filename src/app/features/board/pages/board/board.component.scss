@@ -6,7 +6,7 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
-  margin: 2vw 2vw 0 2vw;
+  padding: 1em 0.5em 0 0.5em;
 
   .columns__column,
   .columns__add-new {
@@ -47,6 +47,9 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
     }
   }
 
+  .columns__add-new {
+    margin: 0 12px 0 4px;
+  }
   .list-wrapper__list {
     width: 272px;
     display: flex;
