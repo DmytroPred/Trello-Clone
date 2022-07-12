@@ -29,12 +29,12 @@
             <!-- Drag task -->
             <div
               class="list-wrapper__list__task"
-              *ngFor="let task of column.tasks; let i = index"
+              *ngFor="let task of column.tasks; let id = index"
               cdkDrag
             >
               <div>
                 <div>
-                  <a>{{ task.name }}</a>
+                  <a (click)="openTaskWindow(id, i)">{{ task.name }}</a>
                 </div>
               </div>
             </div>
@@ -55,12 +55,16 @@
             </button>
           </form>
 
-          <div class="list-wrapper__task-composer" (click)="openTaskForm(i)">
-            <a *ngIf="!addNewTaskToggle || i !== viewIndex; else cancel"
+          <div class="list-wrapper__task-composer">
+            <a
+              *ngIf="!addNewTaskToggle || i !== viewIndex; else cancel"
+              (click)="openTaskForm(i)"
               ><span>&#43;</span>&nbsp;<span>Add new task</span></a
             >
             <ng-template #cancel>
-              <a #cancel>&nbsp;&nbsp;<span>Cancel adding new task</span></a>
+              <a #cancel (click)="openTaskForm(i)"
+                >&nbsp;&nbsp;<span>Cancel adding new task</span></a
+              >
             </ng-template>
           </div>
         </div>
@@ -93,7 +97,11 @@
             >
               Create
             </button>
-            <button mat-raised-button (click)="cancelAddingColumn()">
+            <button
+              mat-raised-button
+              type="button"
+              (click)="cancelAddingColumn()"
+            >
               Cancel
             </button>
           </div>

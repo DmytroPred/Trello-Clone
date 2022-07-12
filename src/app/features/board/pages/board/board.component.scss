@@ -2,7 +2,7 @@ $grey-background-color: #5e6c84;
 $hover-background-color: rgba(94, 108, 132, 0.1);
 
 .columns {
-  height: 80vh;
+  height: 87vh;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -65,7 +65,9 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
     .task-placeholder {
       min-height: 1em;
     }
-    .list-wrapper__list__header, .list-wrapper__list__task, .list-wrapper__list__form {
+    .list-wrapper__list__header,
+    .list-wrapper__list__task,
+    .list-wrapper__list__form {
       flex: 0 0 auto;
       min-height: 20px;
       padding: 2px 8px;
@@ -76,20 +78,24 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
         vertical-align: center;
       }
 
-      a, input {
+      a,
+      input {
+        background-color: #fff;
+        border-radius: 3px;
+        box-shadow: 0 1px 0 #091e4240;
         text-decoration: none;
         cursor: pointer;
         display: block;
         padding: 4px 8px;
         margin: 0 8px;
       }
-        a:hover {
+      a:hover {
         background-color: $hover-background-color;
         border-radius: 3px;
       }
     }
     .list-wrapper__list__form {
-      display:flex;
+      display: flex;
       flex-direction: row;
       flex-wrap: nowrap;
       input {
@@ -104,7 +110,7 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
         background-color: #3f51b5;
       }
       button:not([disabled]):hover {
-        background-color: rgb(63, 81, 181, .7);
+        background-color: rgb(63, 81, 181, 0.7);
       }
     }
     .list-wrapper__task-composer {
@@ -147,6 +153,12 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
 
 @media screen and (max-width: 990px) {
   .columns {
-    height: 70vh;
+    height: 72vh;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  .list-wrapper__list {
+    width: 230px !important;
   }
 }

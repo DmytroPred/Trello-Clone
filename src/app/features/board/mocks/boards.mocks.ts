@@ -9,10 +9,12 @@ export const BoardsMock: IBoard[] = [
         name: 'To Do',
         tasks: [
           {
-            name: 'Crea'
+            name: 'Crea',
+            description: 'Write service for non-connected components'
           },
           {
-            name: 'must have'
+            name: 'must have',
+            description: ''
           }
         ],
       },
@@ -25,9 +27,11 @@ export const BoardsMock: IBoard[] = [
         tasks: [
           {
             name: 'Cader',
+            description: ''
           },          
           {
-            name: 'musdsafaxczave'
+            name: 'musdsafaxczave',
+            description: ''
           }
         ],
       },

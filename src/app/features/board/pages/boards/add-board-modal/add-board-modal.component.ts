@@ -5,17 +5,16 @@ import { MatDialogRef } from '@angular/material/dialog';
 @Component({
   selector: 'app-add-board-modal',
   templateUrl: './add-board-modal.component.html',
-  styleUrls: ['./add-board-modal.component.scss']
+  styleUrls: ['./add-board-modal.component.scss'],
 })
 export class AddBoardModalComponent implements OnInit {
-  constructor(public dialogRef: MatDialogRef<AddBoardModalComponent>) { }
- 
+  constructor(public dialogRef: MatDialogRef<AddBoardModalComponent>) {}
+
   boardName = new FormControl('', [Validators.required]);
-  
-  ngOnInit(): void { }
+
+  ngOnInit(): void {}
 
   addNewBoard() {
     this.dialogRef.close(this.boardName.value);
   }
-
 }

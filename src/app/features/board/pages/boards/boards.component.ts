@@ -12,9 +12,7 @@ import { AddBoardModalComponent } from '../boards/add-board-modal/add-board-moda
 export class BoardsComponent implements OnInit {
   boards!: IBoard[];
 
-  constructor(
-    public dialog: MatDialog
-  ) {}
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.boards = BoardsMock;
@@ -27,7 +25,11 @@ export class BoardsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((boardName) => {
       if (boardName) {
-        boardName = {id:`${this.boards.length}`, name: boardName, columns: []};
+        boardName = {
+          id: `${this.boards.length}`,
+          name: boardName,
+          columns: [],
+        };
         this.addBoard(boardName);
       }
     });
