@@ -1,3 +1,5 @@
 export interface ITask {
-  name?: string | null;
+  id?: string;
+  name?: string;
+  description?: string;
 } 

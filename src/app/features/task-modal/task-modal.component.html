@@ -1,0 +1,73 @@
+<div class="window">
+  <div class="window__header">
+    <div class="window__header__title">
+      <h2>task: {{ selectedTask[0].name }}</h2>
+    </div>
+    <div class="window__header__column-name">
+      <p>in column: {{ selectedColumn[0].name }}</p>
+    </div>
+  </div>
+  <div class="window__content">
+    <div class="window__content__title">
+      <h5 class="title">Description</h5>
+      <a (click)="openCloseDescriptionForm()">Edit</a>
+    </div>
+    <div class="window__content__description">
+      <div
+        *ngIf="
+          !openDescriptionFormToggle && taskDescription;
+          else descriptionForm
+        "
+        (click)="openCloseDescriptionForm()"
+        class="task-description"
+      >
+        <textarea
+          [readonly]="true"
+          cdkTextareaAutosize
+          class="window__content__description__add-content"
+          >{{ taskDescription }}</textarea
+        >
+      </div>
+      <ng-template #descriptionForm>
+        <a
+          class="window__content__description__add-content"
+          *ngIf="!openDescriptionFormToggle; else form"
+          (click)="openDescriptionFormToggle = true"
+          style="color: #5e6c84"
+          >Click to contain text..</a
+        >
+        <ng-template #form>
+          <form
+            (ngSubmit)="saveDescription()"
+            class="window__content__description__edit-container"
+          >
+            <textarea
+              class="description"
+              [formControl]="description"
+              type="string"
+              cdkTextareaAutosize
+              #textArea
+              >{{ taskDescription }}</textarea
+            >
+            <div class="buttons">
+              <button mat-raised-button color="primary" type="submit">
+                Save
+              </button>
+              <button
+                type="button"
+                mat-raised-button
+                (click)="openCloseDescriptionForm()"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+  <!-- Section for comments -->
+  <div class="window__comments">
+    <p>Тут повинні бути коментарі</p>
+  </div>
+</div>
