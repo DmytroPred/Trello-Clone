@@ -10,7 +10,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ITask } from 'src/app/core/models/Task';
 import { MatDialog } from '@angular/material/dialog';
-import { TaskModalComponent } from 'src/app/features/task-modal/task-modal.component';
+import { TaskModalComponent } from 'src/app/features/board/pages/task-modal/task-modal.component';
 import { CurrentColumnService } from 'src/app/core/services/current-column/current-column.service';
 
 @Component({
@@ -108,10 +108,12 @@ export class BoardComponent implements OnInit {
         clickedTaskIndex
       ]!,
     ]);
-    this.dialog.open(TaskModalComponent, {
-      width: '80vw',
-      height: '80vh',
-      autoFocus: false,
-    });
+    // if(this.) {
+      this.dialog.open(TaskModalComponent, {
+        width: '80vw',
+        height: '80vh',
+        autoFocus: false,
+      });
+    // }
   }
 }
