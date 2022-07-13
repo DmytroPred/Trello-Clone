@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { BoardComponent } from './pages/board/board.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { TaskModalComponent } from '../task-modal/task-modal.component';
+import { TaskModalComponent } from './pages/task-modal/task-modal.component';
 
 @NgModule({
   declarations: [
