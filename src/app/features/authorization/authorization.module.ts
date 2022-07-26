@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     MatInputModule,
     ReactiveFormsModule,
+    SharedModule
   ]
 })
 export class AuthorizationModule { }

@@ -1,17 +1,16 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { BoardsMock } from "src/app/features/board/mocks/boards.mocks";
-import { IBoard } from "../../models/Board";
-
+import { Injectable } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class CurrentUserService {
-  
-  // public currentUser$!: BehaviorSubject<IBoard[]>
-
-  // constructor() {
-  //   this.currentUser$ = BoardsMock
-  // }
+  public isUserLoggedIn = new BehaviorSubject<boolean>(false);
+  constructor(private auth: Auth) {
+    this.auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.isUserLoggedIn.next(true);
+      } else console.log(user);
+    });
+  }
 }

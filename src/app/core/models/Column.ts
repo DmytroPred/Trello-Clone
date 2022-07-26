@@ -1,7 +1,8 @@
 import { ITask } from "src/app/core/models/Task";
 
 export interface IColumn {
-  id?: string;
+  docId?: string;
+  columnId?: number;
   name?: string;
   tasks?: ITask[];
 }

@@ -1,0 +1,15 @@
+.spinner-wrapper {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(10, 3, 3, 0.4);
+  top: 0;
+  left: 0;
+  z-index: 150;
+  mat-spinner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

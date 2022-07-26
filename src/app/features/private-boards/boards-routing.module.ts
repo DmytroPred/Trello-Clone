@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BoardComponent } from './pages/board/board.component';
-import { BoardsComponent } from './pages/boards/boards.component';
+import { BoardsComponent } from './pages/private-boards/boards.component';
 
 const routes: Routes = [
   { path: '', component: BoardsComponent },
