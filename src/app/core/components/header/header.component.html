@@ -5,7 +5,7 @@
     >
       <a
         class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
-        routerLink="/"
+        routerLink="public-boards"
       >
         <img class="bi me-2 logo" src="../assets/icons/fox.png" />
       </a>
@@ -14,14 +14,35 @@
       >
         <!-- <li><a href="#" class="nav-link px-2 text-white">Home</a></li>
         <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
-        <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
-        <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li> -->
-        <li><a routerLink="boards" class="nav-link px-2 text-white">Boards</a></li>
+        <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li> -->
+        <li><a routerLink="public-boards" class="nav-link px-2 text-white">Public boards</a></li>
+        <li>
+          <a routerLink="private-boards" class="nav-link px-2 text-white" *ngIf="(currentUserService.isUserLoggedIn | async)">Private boards</a>
+        </li>
       </ul>
-      <div>
-        <button routerLink="authorization/login" type="button" class="btn btn-outline-light me-2">Login</button>
-        <button routerLink="authorization/signup" type="button" class="btn btn-warning">Sign-up</button>
+      <div *ngIf="!(currentUserService.isUserLoggedIn | async); else logout">
+        <button
+          routerLink="authorization/login"
+          type="button"
+          class="btn btn-outline-light me-2"
+        >
+          Login
+        </button>
+        <button
+          routerLink="authorization/signup"
+          type="button"
+          class="btn btn-warning"
+        >
+          Sign-up
+        </button>
       </div>
+      <ng-template #logout>
+        <div>
+          <button routerLink="" type="button" class="btn btn-warning" (click)="signOut()">
+            Logout
+          </button>
+        </div>
+      </ng-template>
     </div>
   </div>
 </header>

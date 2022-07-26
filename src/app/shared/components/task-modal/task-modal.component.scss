@@ -4,6 +4,13 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
   box-sizing: unset;
 }
 .window {
+  .window__header__title {
+    display: flex;
+    flex-direction: row;
+    button {
+      margin-left: auto;
+    }
+  }
   .window__content {
     .window__content__title {
       display: flex;

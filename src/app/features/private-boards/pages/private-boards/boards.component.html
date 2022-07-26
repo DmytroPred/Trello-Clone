@@ -1,0 +1,32 @@
+<div class="main-container">
+  <div>
+    <h3>Your Workspaces</h3>
+    <div>
+      <ul class="boards-list">
+        <li *ngFor="let board of boards; let i = index">
+          <div class="board-tile">
+            <a [routerLink]="[board.name, board.boardId]"
+              >{{ board.name }}
+              <button
+                class="close-button"
+                mat-button
+                (click)="
+                  deleteBoard(i);
+                  $event.stopPropagation();
+                  $event.preventDefault()
+                "
+              >
+                <mat-icon class="close-icon">close</mat-icon>
+              </button>
+            </a>
+          </div>
+        </li>
+        <li>
+          <div class="board-tile create-tile">
+            <a (click)="openBoardModal()">Create new board</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

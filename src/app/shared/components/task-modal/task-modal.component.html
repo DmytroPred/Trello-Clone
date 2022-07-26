@@ -1,10 +1,11 @@
 <div class="window">
   <div class="window__header">
     <div class="window__header__title">
-      <h2>task: {{ selectedTask[0].name }}</h2>
+      <h2>task: {{ selectedTask?.name }}</h2>
+      <!-- <button (click)="assignTask()">Assign</button> -->
     </div>
     <div class="window__header__column-name">
-      <p>in column: {{ selectedColumn[0].name }}</p>
+      <p>in column: {{ selectedColumn?.name }}</p>
     </div>
   </div>
   <div class="window__content">
@@ -15,7 +16,7 @@
     <div class="window__content__description">
       <div
         *ngIf="
-          !openDescriptionFormToggle && taskDescription;
+          !openDescriptionFormToggle && selectedTask?.text;
           else descriptionForm
         "
         (click)="openCloseDescriptionForm()"
@@ -25,7 +26,7 @@
           [readonly]="true"
           cdkTextareaAutosize
           class="window__content__description__add-content"
-          >{{ taskDescription }}</textarea
+          >{{ selectedTask?.text }}</textarea
         >
       </div>
       <ng-template #descriptionForm>
@@ -34,7 +35,7 @@
           *ngIf="!openDescriptionFormToggle; else form"
           (click)="openDescriptionFormToggle = true"
           style="color: #5e6c84"
-          >Click to contain text..</a
+          >Add a detailed description...</a
         >
         <ng-template #form>
           <form
@@ -47,7 +48,7 @@
               type="string"
               cdkTextareaAutosize
               #textArea
-              >{{ taskDescription }}</textarea
+              ></textarea
             >
             <div class="buttons">
               <button mat-raised-button color="primary" type="submit">

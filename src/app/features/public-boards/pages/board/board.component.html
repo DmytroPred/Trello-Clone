@@ -10,7 +10,7 @@
   <div cdkDropListGroup>
     <div
       class="columns__column"
-      *ngFor="let column of currentBoard.columns; let i = index"
+      *ngFor="let column of currentBoard?.columns; let i = index"
     >
       <!-- Drag column -->
       <div class="list-wrapper" cdkDrag>
@@ -29,13 +29,12 @@
             <!-- Drag task -->
             <div
               class="list-wrapper__list__task"
-              *ngFor="let task of column.tasks; let id = index"
+              *ngFor="let task of column?.tasks; let id = index"
               cdkDrag
             >
               <div>
                 <div>
                   <a (click)="openTaskWindow(id, i)">{{ task.name }}</a>
-                  <!-- <a [routerLink]="[column.name, task.name]" (click)="openTaskWindow(id, i)">{{ task.name }}</a> -->
                 </div>
               </div>
             </div>
@@ -56,7 +55,10 @@
             </button>
           </form>
 
-          <div class="list-wrapper__task-composer">
+          <div
+            class="list-wrapper__task-composer"
+            *ngIf="this.uid === this.currentBoard?.ownerId"
+          >
             <a
               *ngIf="!addNewTaskToggle || i !== viewIndex; else cancel"
               (click)="openTaskForm(i)"
@@ -71,7 +73,10 @@
         </div>
       </div>
     </div>
-    <div class="columns__add-new">
+    <div
+      class="columns__add-new"
+      *ngIf="this.uid === this.currentBoard?.ownerId"
+    >
       <div
         class="columns__add-new__column-btn"
         *ngIf="!addNewColumnToggle; else form"

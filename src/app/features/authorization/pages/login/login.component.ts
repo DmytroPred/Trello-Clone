@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
 import { passwordValidator } from 'src/app/shared/validators/password-validator';
+import { AuthenticationService } from '../../../../core/services/authentication.service';
 
 @Component({
   selector: 'app-login',
@@ -8,6 +10,8 @@ import { passwordValidator } from 'src/app/shared/validators/password-validator'
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
+  isLoading: boolean = false;
+
   loginForm: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [
@@ -17,7 +21,9 @@ export class LoginComponent implements OnInit {
     ]),
   });
 
-  constructor() {}
+  constructor(
+    private authenticationService: AuthenticationService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -35,6 +41,13 @@ export class LoginComponent implements OnInit {
   }
 
   loginSubmit() {
-    console.log(111);
+    this.isLoading = true;
+
+    this.authenticationService
+      .login(
+        this.loginForm.get('email')?.value,
+        this.loginForm.get('password')?.value
+      )
+      .finally(() => (this.isLoading = false));
   }
 }

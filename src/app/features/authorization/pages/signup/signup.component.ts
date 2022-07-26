@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
 import { CustomMatchValidator } from 'src/app/shared/validators/custom-match-validator';
 import { passwordValidator } from 'src/app/shared/validators/password-validator';
+import { AuthenticationService } from '../../../../core/services/authentication.service';
 
 @Component({
   selector: 'app-signup',
@@ -9,6 +11,7 @@ import { passwordValidator } from 'src/app/shared/validators/password-validator'
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent implements OnInit {
+  isLoading: boolean = false;
   signupForm: FormGroup = new FormGroup(
     {
       username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]),
@@ -25,7 +28,10 @@ export class SignupComponent implements OnInit {
       this.signupForm.get('confirmPassword')?.touched
     );
   }
-  constructor() {}
+  constructor(
+    private authenticationService: AuthenticationService,
+    private currentUserService: CurrentUserService
+    ) {}
 
   ngOnInit(): void {}
 
@@ -43,5 +49,13 @@ export class SignupComponent implements OnInit {
     } return '';
   }
 
-  signupSubmit() {}
+  signupSubmit() {
+    this.isLoading = true;
+    // console.log(this.signupForm.value);
+    this.authenticationService
+    .signUp(this.signupForm.value).finally(() => this.isLoading = false);
+    // .then(() => this.currentUserService.isUserLoggedIn$.next(true));
+    // console.log(this.signupForm.get('email')?.value, this.signupForm.get('password')?.value)
+    // this.authenticationService.signUp(this.signupForm.get('email')?.value, this.signupForm.get('password')?.value)
+  }
 }

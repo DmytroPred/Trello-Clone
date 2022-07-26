@@ -1,8 +1,9 @@
 import { IColumn } from '../models/Column'
 
 export interface IBoard {
-  id?: string;
+  boardId?: string | number;
+  ownerId?: string;
   name?: string;
-  permission?: string; // public or private board
+  isPublic?: boolean;
   columns?: IColumn[];
 }
