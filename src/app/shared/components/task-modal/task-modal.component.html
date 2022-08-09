@@ -1,17 +1,129 @@
-<div class="window">
+<div class="window position-relative">
+  <button
+    mat-button
+    type="button"
+    class="modal-close-button position-absolute top-0 start-100 translate-middle"
+    [mat-dialog-close]="true"
+  >
+    <mat-icon class="icon-md icon-close" role="button">close</mat-icon>
+  </button>
   <div class="window__header">
     <div class="window__header__title">
-      <h2>task: {{ selectedTask?.name }}</h2>
-      <!-- <button (click)="assignTask()">Assign</button> -->
+      <h2 *ngIf="!this.isEditable" (click)="updateTaskName()">
+        {{ selectedTask?.name }}
+      </h2>
+      <div>
+        <input
+          style="user-select: none"
+          type="text"
+          class="form-control shadow-none"
+          (keydown.enter)="updateTaskName()"
+          *ngIf="isEditable"
+          [(ngModel)]="selectedTask.name"
+          maxlength="15"
+          #taskInput
+        />
+      </div>
+      <a
+        class="btn"
+        *ngIf="isOwner && !isAssignFormOpen; else assignForm"
+        (click)="openCloseForm()"
+        >Assign task</a
+      >
+      <ng-template #assignForm>
+        <div class="assign-form" *ngIf="isOwner">
+          <div class="input-group">
+            <input
+              class="form-control shadow-none"
+              [formControl]="assigningTaskForm"
+              placeholder="username"
+            />
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="assignTask()"
+              [disabled]="
+                assigningTaskForm.invalid ||
+                this.selectedTask.assignedUsers?.includes(
+                  this.assigningTaskForm.value!
+                ) ||
+                (this.asyncValidatorService._isCheckDataBase | async)
+              "
+            >
+              <span
+                class="plus"
+                *ngIf="
+                  !(this.asyncValidatorService._isCheckDataBase | async) ||
+                  assigningTaskForm.invalid
+                "
+                >+</span
+              >
+              <span
+                class="spinner-border spinner-border-sm"
+                *ngIf="
+                  (this.asyncValidatorService._isCheckDataBase | async) &&
+                  !assigningTaskForm.invalid
+                "
+              ></span>
+            </button>
+            <button
+              mat-button
+              class="close-button"
+              type="button"
+              (click)="openCloseForm()"
+            >
+              <mat-icon class="close-icon">close</mat-icon>
+            </button>
+          </div>
+          <mat-error
+            *ngIf="
+              this.selectedTask.assignedUsers?.includes(
+                this.assigningTaskForm.value!
+              )
+            "
+          >
+            {{ assigningTaskForm.value }} already assign.
+          </mat-error>
+          <mat-error *ngIf="assigningTaskForm.errors?.['userDoNotExist']">
+            <span>This user does not exist</span>
+          </mat-error>
+        </div>
+      </ng-template>
     </div>
     <div class="window__header__column-name">
-      <p>in column: {{ selectedColumn?.name }}</p>
+      <p>list: {{ selectedColumn?.name }}</p>
+      <mat-accordion *ngIf="this.selectedTask?.assignedUsers?.length">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> List of users </mat-panel-title>
+          </mat-expansion-panel-header>
+          <ul class="users-list">
+            <li
+              *ngFor="
+                let assignedUser of this.selectedTask?.assignedUsers;
+                let i = index
+              "
+            >
+              <p>{{ assignedUser }}</p>
+              <button
+                mat-button
+                (click)="deleteAssignedUser(i)"
+                *ngIf="isOwner"
+              >
+                <p><mat-icon>close</mat-icon></p>
+              </button>
+            </li>
+          </ul>
+        </mat-expansion-panel>
+      </mat-accordion>
     </div>
   </div>
   <div class="window__content">
     <div class="window__content__title">
       <h5 class="title">Description</h5>
-      <a (click)="openCloseDescriptionForm()">Edit</a>
+      <a class="btn" *ngIf="isOwner" (click)="openCloseDescriptionForm()"
+        >Edit</a
+      >
     </div>
     <div class="window__content__description">
       <div
@@ -19,7 +131,7 @@
           !openDescriptionFormToggle && selectedTask?.text;
           else descriptionForm
         "
-        (click)="openCloseDescriptionForm()"
+        (click)="isOwner ? openCloseDescriptionForm() : false"
         class="task-description"
       >
         <textarea
@@ -33,7 +145,7 @@
         <a
           class="window__content__description__add-content"
           *ngIf="!openDescriptionFormToggle; else form"
-          (click)="openDescriptionFormToggle = true"
+          (click)="isOwner ? (openDescriptionFormToggle = true) : false"
           style="color: #5e6c84"
           >Add a detailed description...</a
         >
@@ -47,11 +159,16 @@
               [formControl]="description"
               type="string"
               cdkTextareaAutosize
+              placeholder="Add a detailed description..."
               #textArea
-              ></textarea
-            >
-            <div class="buttons">
-              <button mat-raised-button color="primary" type="submit">
+            ></textarea>
+            <div class="form-buttons">
+              <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="description.pristine || description.invalid"
+              >
                 Save
               </button>
               <button
@@ -67,8 +184,74 @@
       </ng-template>
     </div>
   </div>
-  <!-- Section for comments -->
-  <div class="window__comments">
-    <p>Тут повинні бути коментарі</p>
+  <div
+    class="comment-section card shadow-0 border"
+    style="background-color: #f0f2f5"
+    *ngIf="this.selectedTask.comments?.length! > 0 || isOwner"
+  >
+    <div class="card-body">
+      <div
+        class="form-outline mb-2"
+        style="background-color: #f0f2f5"
+        *ngIf="
+          this.selectedTask?.assignedUsers?.includes(
+            (this.currentUserService.currentUser$ | async)?.username!
+          ) || isOwner
+        "
+      >
+        <label class="form-label">Add comment</label>
+        <textarea
+          type="string"
+          [formControl]="commentForm"
+          class="form-control shadow-none"
+          rows="3"
+          cdkTextareaAutosize
+          placeholder="Type comment..."
+          aria-label="Type comment..."
+        >
+        </textarea>
+        <div class="form-buttons" *ngIf="commentForm.value">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            (click)="addComment()"
+            [disabled]="!commentForm.value"
+          >
+            Send
+          </button>
+          <button type="button" mat-raised-button (click)="commentForm.reset()">
+            Cancel
+          </button>
+        </div>
+      </div>
+      <div *ngFor="let comment of this.selectedTask.comments">
+        <div class="card mb-4">
+          <div class="card-body">
+            <p>{{ comment.text }}</p>
+            <div class="d-flex justify-content-between">
+              <div class="d-flex flex-row align-items-center">
+                <ngx-letters-avatar
+                  [avatarName]="comment.ownerName!"
+                  [width]="40"
+                  [circular]="true"
+                  font
+                  family="Open Sans"
+                >
+                </ngx-letters-avatar>
+                <p class="small mb-0 ms-2">
+                  {{ comment.ownerName }}
+                </p>
+              </div>
+              <div class="d-flex flex-row align-items-center">
+                <p class="small text-muted mb-0" style="margin-right: 11px">
+                  {{ comment.creationDate | timeago }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

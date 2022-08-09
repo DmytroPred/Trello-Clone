@@ -4,3 +4,13 @@ form {
   justify-content: center;
   align-items: center;
 }
+.container__custom-error {
+  span {
+    position: relative;
+    font-size: 12px;
+  }
+}
+
+::ng-deep .mat-form-field-infix {
+  width: auto!important;
+}
