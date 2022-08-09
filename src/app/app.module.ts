@@ -10,8 +10,9 @@ import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFirestore,getFirestore } from '@angular/fire/firestore';;
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+
+import { TimeagoModule } from 'ngx-timeago';
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,6 +22,7 @@ import { FIREBASE_OPTIONS } from '@angular/fire/compat';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    TimeagoModule.forChild(),
 
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),

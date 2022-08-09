@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
 import { passwordValidator } from 'src/app/shared/validators/password-validator';
 import { AuthenticationService } from '../../../../core/services/authentication.service';
 
