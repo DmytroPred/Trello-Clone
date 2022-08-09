@@ -1,0 +1,16 @@
+mat-dialog-content {
+  h2, p {
+    margin: 0;
+  }
+  p{
+    color:red;
+    font-weight: 100;
+    text-align: center;
+  }
+}
+mat-dialog-actions {
+  gap: 1em;
+  button {
+    min-width: 75px;
+  }
+}

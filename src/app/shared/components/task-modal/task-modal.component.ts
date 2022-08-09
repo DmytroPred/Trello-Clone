@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { first, switchMap, tap } from 'rxjs/operators';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
+import { first } from 'rxjs/operators';
 import { IColumn } from 'src/app/core/models/Column';
-import { CurrentColumnService } from 'src/app/core/services/current-column/current-column.service';
+import { CurrentDataService } from 'src/app/core/services/current-data/current-data.service';
 import { ITask } from 'src/app/core/models/Task';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { ActivatedRoute, Router } from '@angular/router';
 import { IBoard } from 'src/app/core/models/Board';
-import { IUser } from 'src/app/core/models/User';
-import { lastValueFrom } from 'rxjs';
+import { BoardFirebaseService } from 'src/app/core/services/firebase-entities/board-firebase.service';
+import { UserFirebaseService } from 'src/app/core/services/firebase-entities/user-firebase.service';
+import { AsyncValidatorService } from '../../validators/service/async-validator.service';
+import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
 
 @Component({
   selector: 'app-task-modal',
@@ -17,41 +18,87 @@ import { lastValueFrom } from 'rxjs';
   styleUrls: ['./task-modal.component.scss'],
 })
 export class TaskModalComponent implements OnInit {
+  isAssignFormOpen: boolean = false;
+  isEditable: boolean = false;
+  isOwner!: boolean;
   openDescriptionFormToggle: boolean = false;
+
+  uid!: string;
+  username!: string;
+  initTaskName!: string;
+
   currentBoard!: IBoard;
   selectedColumn!: IColumn;
   selectedTask!: ITask;
 
-  uid!: string;
-  description = new FormControl('');
+  @ViewChild('taskInput') _taskInput!: ElementRef;
+
+  description = new FormControl('', [Validators.maxLength(128)]);
+  commentForm = new FormControl('', [Validators.maxLength(64)]);
+  assigningTaskForm = new FormControl(
+    '',
+    [Validators.required],
+    [this.asyncValidatorService.usernameExistValidator('invite')]
+  );
+
+  updateTaskName() {
+    this.isEditable = !this.isEditable;
+    const isNameChanged = this.initTaskName !== this.selectedTask.name
+    
+    if (this.isEditable) {
+      setTimeout(() => this._taskInput.nativeElement.focus(), 25);
+    } else if(isNameChanged) {
+      if (this.currentBoard.isPublic && this.selectedTask.name?.length! >= 3) {
+        this.boardFirebaseService.updatePublicBoard(
+          this.currentBoard.boardId!,
+          {
+            columns: this.currentBoard.columns,
+          }
+        );
+      } else if (this.selectedTask.name?.length! >= 3) {
+        this.boardFirebaseService.updatePrivateBoard(
+          this.uid,
+          this.currentBoard.boardId!,
+          { columns: this.currentBoard.columns }
+        );
+      } else {
+        alert('Names with less than 3 char didn\'t saving.');
+        this.selectedTask.name = this.initTaskName;
+      }
+    }
+  }
+
   constructor(
+    public asyncValidatorService: AsyncValidatorService,
+    private boardFirebaseService: BoardFirebaseService,
     private afAuth: AngularFireAuth,
-    private afStore: AngularFirestore,
-    private currentColumnService: CurrentColumnService
+    private currentDataService: CurrentDataService,
+    public currentUserService: CurrentUserService
   ) {}
 
   ngOnInit(): void {
     this.afAuth.user.pipe(first()).subscribe((res) => {
-      if(res) {
+      if (res) {
+        this.username = res.displayName!;
         this.uid = res!.uid;
+        this.uid === this.currentBoard.ownerId
+          ? (this.isOwner = true)
+          : (this.isOwner = false);
       }
     });
 
-    this.currentColumnService._currentBoard
-      .pipe(first())
-      .subscribe((result) => {
-        (this.currentBoard = result), console.log(this.currentBoard);
-      });
+    this.currentDataService._currentBoard.pipe(first()).subscribe((result) => {
+      this.currentBoard = result;
+    });
 
-    this.currentColumnService._currentColumn
-      .pipe(first())
-      .subscribe((result) => {
-        this.selectedColumn = result;
-      });
+    this.currentDataService._currentColumn.pipe(first()).subscribe((result) => {
+      this.selectedColumn = result;
+    });
 
-    this.currentColumnService._currentTask.pipe(first()).subscribe((result) => {
-      (this.selectedTask = result),
-        this.description.setValue(result.text!);
+    this.currentDataService._currentTask.pipe(first()).subscribe((result) => {
+      (this.selectedTask = result); 
+      this.description.setValue(result.text!);
+      this.initTaskName = this.selectedTask.name!
     });
   }
 
@@ -65,34 +112,52 @@ export class TaskModalComponent implements OnInit {
 
     // Save changed description on server
     if (this.currentBoard.isPublic) {
-      this.afStore
-        .doc(`boards/board${this.currentBoard.boardId}`)
-        .update({ columns: this.currentBoard.columns });
+      this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
+        columns: this.currentBoard.columns,
+      });
     } else {
-      this.afStore
-        .doc(`user/${this.uid}/boards/board${this.currentBoard.boardId}`)
-        .update({ columns: this.currentBoard.columns });
+      this.boardFirebaseService.updatePrivateBoard(
+        this.uid,
+        this.currentBoard.boardId!,
+        { columns: this.currentBoard.columns }
+      );
     }
 
     this.openCloseDescriptionForm();
   }
 
-  // async assignTask() {
-  // // console.log(this.selectedTask);
-  // const findUser$ = this.afStore
-  //   .collection<IUser>('user', (ref) =>
-  //     ref.where('email', '==', '1234q@gmail.com')
-  //   )
-  //   .valueChanges()
-  //   .pipe(
-  //     // tap(asgnUser => [assignedUser] = asgnUser),
-  //     first())
-  // const [assignedUser]: IUser[] = await lastValueFrom(findUser$);
-  // // console.log(assignedUser);
-  // assignedUser!.assignedTasks.push(this.selectedTask);
-  // // console.log(assignedUser);
-  // this.afStore.collection('user').doc(assignedUser!.uid).update(assignedUser!)
-  // // .valueChanges().pipe(first()).subscribe(console.log);
-  // // console.log(this.afStore.collection('user').get())
-  // }
+  addComment() {
+    this.selectedTask.comments?.unshift({
+      ownerName: this.username,
+      ownerId: this.uid,
+      text: this.commentForm.value!,
+      creationDate: Date.now(),
+    });
+
+    this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
+      columns: this.currentBoard.columns,
+    });
+
+    this.commentForm.reset();
+  }
+  openCloseForm() {
+    this.isAssignFormOpen = !this.isAssignFormOpen;
+    this.assigningTaskForm.reset();
+  }
+
+  assignTask() {
+    this.isAssignFormOpen = !this.isAssignFormOpen;
+    this.selectedTask.assignedUsers?.push(this.assigningTaskForm.value!);
+
+    this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
+      columns: this.currentBoard.columns,
+    });
+  }
+
+  deleteAssignedUser(index: number) {
+    this.selectedTask.assignedUsers?.splice(index, 1);
+    this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
+      columns: this.currentBoard.columns,
+    });
+  }
 }
