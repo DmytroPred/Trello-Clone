@@ -11,7 +11,9 @@
             signupForm.get('username')?.invalid &&
             signupForm.get('username')?.touched
           "
-          >{{ getNameErrorMessage('username') }}</mat-error
+          >{{ getNameErrorMessage('username') }}
+          <span *ngIf="signupForm.controls['username'].errors?.['usernameExist']">Username already exist</span>
+          </mat-error
         >
       </mat-form-field>
       <mat-form-field appearance="fill">
@@ -21,7 +23,9 @@
           *ngIf="
             signupForm.get('email')?.invalid && signupForm.get('email')?.touched
           "
-          >{{ getNameErrorMessage('email') }}</mat-error
+          >{{ getNameErrorMessage('email') }}
+          <span *ngIf="signupForm.controls['email'].errors?.['emailExist']">Email already exist</span>
+          </mat-error
         >
       </mat-form-field>
       <mat-form-field appearance="fill">
@@ -51,7 +55,7 @@
         mat-raised-button
         color="primary"
         type="submit"
-        [disabled]="signupForm.invalid"
+        [disabled]="signupForm.invalid || (this.asyncValidatorService._isCheckDataBase | async)"
       >
         Sign up
       </button>

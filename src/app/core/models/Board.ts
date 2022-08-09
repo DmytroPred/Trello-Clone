@@ -1,9 +1,10 @@
 import { IColumn } from '../models/Column'
 
 export interface IBoard {
-  boardId?: string | number;
+  boardId?: number;
   ownerId?: string;
   name?: string;
   isPublic?: boolean;
   columns?: IColumn[];
+  invitedUsers?: string[];
 }

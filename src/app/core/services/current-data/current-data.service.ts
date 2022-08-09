@@ -8,7 +8,7 @@ import { ITask } from "../../models/Task";
   providedIn: 'root'
 })
 
-export class CurrentColumnService {
+export class CurrentDataService {
   public _currentBoard: BehaviorSubject<IBoard>;
   public _currentColumn: BehaviorSubject<IColumn>;
   public _currentTask: BehaviorSubject<ITask>;
@@ -17,5 +17,9 @@ export class CurrentColumnService {
     this._currentBoard = new BehaviorSubject<IBoard>({});
     this._currentColumn = new BehaviorSubject<IColumn>({});
     this._currentTask = new BehaviorSubject<ITask>({});
+  }
+
+  changeBehaviorSubjectValue(behSubject: BehaviorSubject<IBoard | IColumn | ITask>, nextValue: IBoard | IColumn | ITask) {
+    behSubject.next(nextValue);
   }
 }

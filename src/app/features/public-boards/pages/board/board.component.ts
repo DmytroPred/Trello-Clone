@@ -1,4 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  DoCheck,
+  ElementRef,
+  OnChanges,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { IBoard } from 'src/app/core/models/Board';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
@@ -10,11 +19,12 @@ import {
 import { ITask } from 'src/app/core/models/Task';
 import { MatDialog } from '@angular/material/dialog';
 import { TaskModalComponent } from 'src/app/shared/components/task-modal/task-modal.component';
-import { CurrentColumnService } from 'src/app/core/services/current-column/current-column.service';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { first, switchMap } from 'rxjs';
+import { CurrentDataService } from 'src/app/core/services/current-data/current-data.service';
+import { first } from 'rxjs';
 import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { BoardFirebaseService } from 'src/app/core/services/firebase-entities/board-firebase.service';
+import { AsyncValidatorService } from 'src/app/shared/validators/service/async-validator.service';
 
 @Component({
   selector: 'app-board',
@@ -22,54 +32,58 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
   styleUrls: ['./board.component.scss'],
 })
 export class PubBoardComponent implements OnInit {
-  viewIndex!: number;
-  clickedColumnIndex!: number;
-
-  uid!: string | undefined;
-  boardId!: string;
-
-  currentBoardFromServer!: IBoard;
-  currentBoard!: IBoard;
-
+  isOwner!: boolean;
   addNewTaskToggle: boolean = false;
   addNewColumnToggle: boolean = false;
+  isEditable: boolean = false;
+
+  viewTaskFormIndex!: number;
+  viewColumnNameFormIndex!: number;
+  boardId!: number;
+
+  uid!: string;
+
+  currentBoard!: IBoard;
+
+  @ViewChild('columnNameInput', { static: false })
+  _inputElement!: ElementRef;
 
   columnName = new FormControl('', [Validators.required]);
   taskName = new FormControl('', [Validators.required]);
-
+  username = new FormControl(
+    '',
+    [Validators.required],
+    [this.asyncValidatorService.usernameExistValidator('invite')]
+  );
   constructor(
     private afAuth: AngularFireAuth,
+    private boardFirebaseService: BoardFirebaseService,
+    public asyncValidatorService: AsyncValidatorService,
     public currentUserService: CurrentUserService,
-    private afStore: AngularFirestore,
     private route: ActivatedRoute,
     public dialog: MatDialog,
-    private currentColumnService: CurrentColumnService
-  ) {}
+    private currentDataService: CurrentDataService
+  ) { }
 
   ngOnInit(): void {
     this.route.params
       .pipe(first())
       .subscribe((params) => (this.boardId = params.id));
 
-    this.afAuth.user
-      .pipe(
-        switchMap((res) => {
-          this.uid = res?.uid;
-          return (
-            this.afStore
-              .doc(
-                `boards/board${this.boardId}`
-              )
-              .valueChanges()
-              .pipe(first())
-          );
-        })
-      )
+    this.afAuth.user.pipe(first()).subscribe((res) => {
+      if (res) {
+        this.uid = res!.uid;
+      }
+    });
+    this.boardFirebaseService
+      .getPublicBoard(this.boardId)
+      .pipe(first())
       .subscribe((res) => {
         if (res) {
-          this.currentBoardFromServer = res as IBoard;
-          this.currentBoardFromServer.boardId = this.boardId;
-          this.currentBoard = this.currentBoardFromServer;
+          this.currentBoard = res as IBoard;
+          this.uid === this.currentBoard.ownerId
+            ? (this.isOwner = true)
+            : (this.isOwner = false);
         } else console.log('Something goes wrong');
       });
   }
@@ -84,9 +98,10 @@ export class PubBoardComponent implements OnInit {
       name: this.columnName.value!,
       tasks: [],
     });
-    this.afStore
-      .doc(`boards/board${this.boardId}`)
-      .update({ columns: this.currentBoard.columns });
+
+    this.boardFirebaseService.updatePublicBoard(this.boardId, {
+      columns: this.currentBoard.columns,
+    });
 
     this.addNewColumnToggle = !this.addNewColumnToggle;
     this.columnName.reset();
@@ -97,78 +112,133 @@ export class PubBoardComponent implements OnInit {
     this.columnName.reset();
   }
 
+  updateColumnName(index: number) {
+    this.isEditable = !this.isEditable;
+    this.viewColumnNameFormIndex = index;
+
+    if (this.isEditable) {
+      setTimeout(() => {
+        console.log(this._inputElement.nativeElement.value);
+        return this._inputElement.nativeElement.focus();
+      }, 25);
+    } else if (this.currentBoard.columns?.[index].name?.length! >= 3) {
+      this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
+        columns: this.currentBoard.columns,
+      });
+    } else {
+      alert("Names with less than 3 char didn't saving.");
+
+      this.boardFirebaseService
+        .getPublicBoard(this.boardId)
+        .pipe(first())
+        .subscribe((res) => {
+          if (res) {
+            this.currentBoard = res as IBoard;
+          } else console.log('Something goes wrong');
+        });
+    }
+  }
   dropColumn(event: CdkDragDrop<string[]>) {
     if (event.isPointerOverContainer) {
       this.openTaskForm();
+      this.isEditable = false;
     }
-    // To Do if cur user owner of board, he can sort columns
-    moveItemInArray(
-      this.currentBoard.columns!,
-      event.previousIndex,
-      event.currentIndex
-    );
-    this.afStore
-      .doc(`boards/board${this.boardId}`)
-      .update({ columns: this.currentBoard.columns });
+    if (this.isOwner) {
+      moveItemInArray(
+        this.currentBoard.columns!,
+        event.previousIndex,
+        event.currentIndex
+      );
+      this.boardFirebaseService.updatePublicBoard(this.boardId, {
+        columns: this.currentBoard.columns,
+      });
+    }
   }
 
   dropTask(event: CdkDragDrop<ITask[] | any>, index: number) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        this.currentBoard.columns?.[index].tasks!,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
+    if (this.isOwner) {
+      if (event.previousContainer === event.container) {
+        moveItemInArray(
+          this.currentBoard.columns?.[index].tasks!,
+          event.previousIndex,
+          event.currentIndex
+        );
+      } else {
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
+      }
+      this.boardFirebaseService.updatePublicBoard(
+        this.boardId,
+        this.currentBoard
       );
     }
-    // To Do if cur user owner of board, he can sort tasks
-    this.afStore
-      .doc(`boards/board${this.boardId}`)
-      .update(this.currentBoard);
   }
 
   openTaskForm(index?: number) {
     this.addNewTaskToggle = !this.addNewTaskToggle;
-    this.viewIndex = index!;
+    this.viewTaskFormIndex = index!;
     this.taskName.reset();
   }
 
   addNewTask(index: number) {
     this.currentBoard.columns?.[index].tasks?.push({
-      taskId: `${this.currentBoard.columns?.[index].tasks?.length!}`,
+      taskId: this.currentBoard.columns?.[index].tasks?.length!,
       name: this.taskName.value!,
       text: '',
+      assignedUsers: [],
+      comments: [],
     });
 
-    this.afStore
-      .doc(`boards/board${this.boardId}`)
-      .update({ columns: this.currentBoard.columns });
+    this.boardFirebaseService.updatePublicBoard(this.boardId, {
+      columns: this.currentBoard.columns,
+    });
 
     this.addNewTaskToggle = !this.addNewTaskToggle;
     this.taskName.reset();
   }
 
   openTaskWindow(clickedTaskIndex: number, clickedColumnIndex: number) {
-    this.currentColumnService._currentColumn.next(
+    this.currentDataService.changeBehaviorSubjectValue(
+      this.currentDataService._currentBoard,
+      this.currentBoard
+    );
+
+    this.currentDataService.changeBehaviorSubjectValue(
+      this.currentDataService._currentColumn,
       this.currentBoard.columns?.[clickedColumnIndex]!
     );
-    this.currentColumnService._currentTask.next(
-      this.currentBoard.columns?.[clickedColumnIndex].tasks?.[
-        clickedTaskIndex
-      ]!
+
+    this.currentDataService.changeBehaviorSubjectValue(
+      this.currentDataService._currentTask,
+      this.currentBoard.columns?.[clickedColumnIndex].tasks?.[clickedTaskIndex]!
     );
-    this.currentColumnService._currentBoard.next(this.currentBoard);
-    
+
     this.dialog.open(TaskModalComponent, {
-      width: '80vw',
-      height: '80vh',
+      width: '95vw',
+      height: '90vh',
+      maxWidth: '95vw',
       autoFocus: false,
     });
+  }
+
+  inviteUserToBoard() {
+    this.currentBoard.invitedUsers?.push(this.username.value!);
+    this.boardFirebaseService.updatePublicBoard(this.boardId, {
+      invitedUsers: this.currentBoard.invitedUsers,
+    });
+
+    this.username.reset();
+  }
+
+  deleteInvitedUser(index: number) {
+    this.currentBoard.invitedUsers?.splice(index, 1);
+    this.boardFirebaseService.updatePublicBoard(
+      this.boardId,
+      this.currentBoard
+    );
   }
 }

@@ -9,14 +9,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { BoardComponent } from './pages/board/board.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { TaskModalComponent } from '../../shared/components/task-modal/task-modal.component';
 import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
     BoardsComponent,
     BoardComponent,
-    TaskModalComponent,
   ],
   imports: [
     CommonModule,

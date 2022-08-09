@@ -8,9 +8,20 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-
+import { MatExpansionModule } from '@angular/material/expansion';
+import { TaskModalComponent } from './components/task-modal/task-modal.component';
+import { MatIconModule } from '@angular/material/icon';
+import { LettersAvatarModule } from 'ngx-letters-avatar';
+import { TimeagoModule} from 'ngx-timeago';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 @NgModule({
-  declarations: [PageNotFoundComponent, LoadSpinnerComponent, AddBoardModalComponent],
+  declarations: [
+    PageNotFoundComponent,
+    LoadSpinnerComponent,
+    AddBoardModalComponent,
+    TaskModalComponent,
+    ConfirmationDialogComponent,
+  ],
   imports: [
     CommonModule,
     MatProgressSpinnerModule,
@@ -19,7 +30,11 @@ import { CommonModule } from '@angular/common';
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
+    MatExpansionModule,
+    LettersAvatarModule,
+    TimeagoModule
   ],
-  exports: [LoadSpinnerComponent],
+  exports: [LoadSpinnerComponent]
 })
 export class SharedModule {}

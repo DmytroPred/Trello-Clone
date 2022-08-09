@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, getAdditionalUserInfo, signInWithEmailAndPassword, signOut, updateProfile } from '@angular/fire/auth'
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { Observable, first } from 'rxjs';
 import { IUser } from 'src/app/core/models/User';
-import { switchMap } from 'rxjs/operators';
 import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
 import { UserFirebaseService } from './firebase-entities/user-firebase.service';
 
@@ -15,18 +19,25 @@ export class AuthenticationService {
     private currentUserService: CurrentUserService,
     private userFirebaseService: UserFirebaseService,
     private auth: Auth,
-    private router: Router,
-    ) { }
+    private router: Router
+  ) {}
 
-    async signUp(signedUpUser: IUser) {
+  async signUp(signedUpUser: IUser) {
     try {
-      const userCredential = await createUserWithEmailAndPassword(this.auth, signedUpUser.email, signedUpUser.password);
+      const userCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        signedUpUser.email,
+        signedUpUser.password
+      );
       const { user } = userCredential;
       await updateProfile(user, {
-        displayName: signedUpUser.username
-      })
+        displayName: signedUpUser.username,
+      });
 
-      await this.userFirebaseService.addUserWithCustomId(user.uid, signedUpUser);
+      await this.userFirebaseService.addUserWithCustomId(
+        user.uid,
+        signedUpUser
+      );
       this.currentUserService.isUserLoggedIn.next(true);
       this.router.navigateByUrl('public-boards');
     } catch (error) {
@@ -40,7 +51,7 @@ export class AuthenticationService {
 
       this.currentUserService.isUserLoggedIn.next(true);
       this.router.navigateByUrl('public-boards');
-    } catch(error) {
+    } catch (error) {
       console.error(error);
       alert(error);
     }
@@ -49,10 +60,10 @@ export class AuthenticationService {
   async signOut() {
     try {
       await signOut(this.auth);
-      
+
       this.currentUserService.isUserLoggedIn.next(false);
       this.router.navigateByUrl('public-boards');
-    } catch(error) {
+    } catch (error) {
       alert(error);
     }
   }

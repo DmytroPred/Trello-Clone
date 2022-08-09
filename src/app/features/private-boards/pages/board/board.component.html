@@ -16,7 +16,36 @@
       <div class="list-wrapper" cdkDrag>
         <div class="list-wrapper__list">
           <div class="list-wrapper__list__header">
-            <p class="title">{{ column.name }}</p>
+            <p
+              (click)="updateColumnName(i)"
+              *ngIf="!editColumnNameToggle || i !== viewColumnNameFormIndex"
+              class="title"
+            >
+              {{ column.name }}
+            </p>
+            <div
+              (mousedown)="$event.stopPropagation()"
+              class="input-group"
+              *ngIf="editColumnNameToggle && i === viewColumnNameFormIndex"
+            >
+              <input
+                class="form-control"
+                [(ngModel)]="column.name"
+                (keydown.enter)="updateColumnName(i)"
+                (keydown.escape)="this.editColumnNameToggle = false"
+                type="text"
+                maxlength="15"
+                #columnNameInput
+              />
+              <button
+                mat-raised-button
+                class="mat-raised-button"
+                color="primary"
+                (click)="updateColumnName(i)"
+              >
+                +
+              </button>
+            </div>
           </div>
           <hr />
           <!-- Drop list for task -->
@@ -42,9 +71,9 @@
           <form
             (ngSubmit)="addNewTask(i)"
             class="list-wrapper__list__form"
-            *ngIf="addNewTaskToggle && i === viewIndex"
+            *ngIf="addNewTaskToggle && i === viewTaskFormIndex"
           >
-            <input placeholder="name" [formControl]="taskName" />
+            <input placeholder="name" [formControl]="taskName" maxlength="15" />
             <button
               mat-button
               color="primary"
@@ -57,7 +86,7 @@
 
           <div class="list-wrapper__task-composer">
             <a
-              *ngIf="!addNewTaskToggle || i !== viewIndex; else cancel"
+              *ngIf="!addNewTaskToggle || i !== viewTaskFormIndex; else cancel"
               (click)="openTaskForm(i)"
               ><span>&#43;</span>&nbsp;<span>Add new task</span></a
             >
@@ -75,7 +104,7 @@
         class="columns__add-new__column-btn"
         *ngIf="!addNewColumnToggle; else form"
       >
-        <a (click)="openColumnForm()"
+        <a (click)="addingColumnWindowToggle()"
           ><span>&#43;</span>&nbsp;<span>Add new column</span></a
         >
       </div>
@@ -83,7 +112,12 @@
         <form (ngSubmit)="addNewColumn()" class="columns__add-new__column-form">
           <mat-form-field appearance="outline">
             <mat-label>Column name</mat-label>
-            <input matInput [formControl]="columnName" type="text" />
+            <input
+              matInput
+              [formControl]="columnName"
+              type="text"
+              maxlength="15"
+            />
             <mat-error *ngIf="columnName.hasError('required')">
               Name is <span>required</span>
             </mat-error>
@@ -100,7 +134,7 @@
             <button
               mat-raised-button
               type="button"
-              (click)="cancelAddingColumn()"
+              (click)="addingColumnWindowToggle()"
             >
               Cancel
             </button>

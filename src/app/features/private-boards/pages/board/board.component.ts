@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { IBoard } from 'src/app/core/models/Board';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
@@ -10,11 +10,10 @@ import {
 import { ITask } from 'src/app/core/models/Task';
 import { MatDialog } from '@angular/material/dialog';
 import { TaskModalComponent } from 'src/app/shared/components/task-modal/task-modal.component';
-import { CurrentColumnService } from 'src/app/core/services/current-column/current-column.service';
-
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { CurrentDataService } from 'src/app/core/services/current-data/current-data.service';
 import { first, switchMap } from 'rxjs';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
+import { BoardFirebaseService } from 'src/app/core/services/firebase-entities/board-firebase.service';
 
 @Component({
   selector: 'app-board',
@@ -22,27 +21,33 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
   styleUrls: ['./board.component.scss'],
 })
 export class BoardComponent implements OnInit {
-  viewIndex!: number;
+  viewTaskFormIndex!: number;
+  viewColumnNameFormIndex!: number;
+
   clickedColumnIndex!: number;
 
   uid!: string | undefined;
-  boardId!: string;
+  boardId!: number;
 
   currentBoardFromServer!: IBoard;
   currentBoard!: IBoard;
 
   addNewTaskToggle: boolean = false;
   addNewColumnToggle: boolean = false;
+  editColumnNameToggle: boolean = false;
 
   columnName = new FormControl('', [Validators.required]);
   taskName = new FormControl('', [Validators.required]);
 
+  @ViewChild('columnNameInput', { static: false })
+  _inputElement!: ElementRef;
+
   constructor(
-    private afAuth: AngularFireAuth,
-    private afStore: AngularFirestore,
     private route: ActivatedRoute,
     public dialog: MatDialog,
-    private currentColumnService: CurrentColumnService
+    private boardFirebaseService: BoardFirebaseService,
+    private currentUserService: CurrentUserService,
+    private currentDataService: CurrentDataService
   ) {}
 
   ngOnInit(): void {
@@ -50,27 +55,27 @@ export class BoardComponent implements OnInit {
       .pipe(first())
       .subscribe((params) => (this.boardId = params.id));
 
-    this.afAuth.user
+    this.currentUserService.currentUser$
       .pipe(
-        switchMap((res) => {
-          this.uid = res?.uid;
-          return this.afStore
-            .doc(`user/${this.uid}/boards/board${this.boardId}`)
-            .valueChanges()
+        first(),
+        switchMap((user) => {
+          this.uid = user.uid;
+          return this.boardFirebaseService
+            .getPrivateBoard(this.uid, this.boardId)
             .pipe(first());
         })
       )
       .subscribe((res) => {
         if (res) {
           this.currentBoardFromServer = res as IBoard;
-          this.currentBoardFromServer.boardId = this.boardId;
           this.currentBoard = this.currentBoardFromServer;
         } else console.log('Something goes wrong');
       });
   }
 
-  openColumnForm() {
+  addingColumnWindowToggle() {
     this.addNewColumnToggle = !this.addNewColumnToggle;
+    this.columnName.reset();
   }
 
   addNewColumn() {
@@ -79,18 +84,11 @@ export class BoardComponent implements OnInit {
       name: this.columnName.value!,
       tasks: [],
     });
+    this.boardFirebaseService.updatePrivateBoard(this.uid!, this.boardId, {
+      columns: this.currentBoard.columns,
+    });
 
-    this.afStore
-      .doc(`user/${this.uid}/boards/board${this.boardId}`)
-      .update({ columns: this.currentBoard.columns });
-
-    this.addNewColumnToggle = !this.addNewColumnToggle;
-    this.columnName.reset();
-  }
-
-  cancelAddingColumn() {
-    this.addNewColumnToggle = !this.addNewColumnToggle;
-    this.columnName.reset();
+    this.addingColumnWindowToggle();
   }
 
   dropColumn(event: CdkDragDrop<string[]>) {
@@ -102,9 +100,10 @@ export class BoardComponent implements OnInit {
       event.previousIndex,
       event.currentIndex
     );
-    this.afStore
-      .doc(`user/${this.uid}/boards/board${this.boardId}`)
-      .update({ columns: this.currentBoard.columns });
+
+    this.boardFirebaseService.updatePrivateBoard(this.uid!, this.boardId, {
+      columns: this.currentBoard.columns,
+    });
   }
 
   dropTask(event: CdkDragDrop<ITask[] | any>, index: number) {
@@ -123,45 +122,68 @@ export class BoardComponent implements OnInit {
       );
     }
 
-    this.afStore
-      .doc(`user/${this.uid}/boards/board${this.boardId}`)
-      .update(this.currentBoard);
+    this.boardFirebaseService.updatePrivateBoard(
+      this.uid!,
+      this.boardId,
+      this.currentBoard
+    );
   }
 
   openTaskForm(index?: number) {
     this.addNewTaskToggle = !this.addNewTaskToggle;
-    this.viewIndex = index!;
+    this.viewTaskFormIndex = index!;
     this.taskName.reset();
   }
 
   addNewTask(index: number) {
     this.currentBoard.columns?.[index].tasks?.push({
-      taskId: `${this.currentBoard.columns?.[index].tasks?.length!}`,
+      taskId: this.currentBoard.columns?.[index].tasks?.length!,
       name: this.taskName.value!,
       text: '',
     });
 
-    this.afStore
-      .doc(`user/${this.uid}/boards/board${this.boardId}`)
-      .update({ columns: this.currentBoard.columns });
+    this.boardFirebaseService.updatePrivateBoard(this.uid!, this.boardId, {
+      columns: this.currentBoard.columns,
+    });
 
     this.addNewTaskToggle = !this.addNewTaskToggle;
     this.taskName.reset();
   }
 
   openTaskWindow(clickedTaskIndex: number, clickedColumnIndex: number) {
-    this.currentColumnService._currentColumn.next(
+    this.currentDataService.changeBehaviorSubjectValue(
+      this.currentDataService._currentBoard,
+      this.currentBoard
+    );
+
+    this.currentDataService.changeBehaviorSubjectValue(
+      this.currentDataService._currentColumn,
       this.currentBoard.columns?.[clickedColumnIndex]!
     );
-    this.currentColumnService._currentTask.next(
+
+    this.currentDataService.changeBehaviorSubjectValue(
+      this.currentDataService._currentTask,
       this.currentBoard.columns?.[clickedColumnIndex].tasks?.[clickedTaskIndex]!
     );
-    this.currentColumnService._currentBoard.next(this.currentBoard);
 
     this.dialog.open(TaskModalComponent, {
-      width: '80vw',
-      height: '80vh',
+      width: '95vw',
+      height: '90vh',
+      maxWidth: '95vw',
       autoFocus: false,
+    });
+  }
+
+  updateColumnName(index: number) {
+    this.editColumnNameToggle = !this.editColumnNameToggle;
+    this.viewColumnNameFormIndex = index;
+
+    if (this.editColumnNameToggle) {
+      setTimeout(() => this._inputElement.nativeElement.focus(), 25);
+    }
+
+    this.boardFirebaseService.updatePublicBoard(this.boardId, {
+      columns: this.currentBoard.columns,
     });
   }
 }

@@ -1,9 +1,87 @@
+<div class="buttons-panel" *ngIf="this.isOwner">
+  <div class="buttons-panel__button">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Invite user </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="input-group">
+          <input
+            class="form-control shadow-none"
+            [formControl]="username"
+            placeholder="username"
+          />
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="inviteUserToBoard()"
+            [disabled]="
+              username.invalid ||
+              this.currentBoard.invitedUsers?.includes(this.username.value!) ||
+              (this.asyncValidatorService._isCheckDataBase | async)
+            "
+          >
+            <span
+              class="plus"
+              *ngIf="
+                !(this.asyncValidatorService._isCheckDataBase | async) ||
+                username.invalid
+              "
+              >+</span
+            >
+            <span
+              class="spinner-border spinner-border-sm"
+              *ngIf="
+                (this.asyncValidatorService._isCheckDataBase | async) &&
+                !username.invalid
+              "
+            ></span>
+          </button>
+        </div>
+        <mat-error
+          *ngIf="this.currentBoard.invitedUsers?.includes(this.username.value!)"
+        >
+          {{ username.value }} already invited.
+        </mat-error>
+        <mat-error *ngIf="username.errors?.['userDoNotExist']">
+          <span>This user does not exist</span>
+        </mat-error>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  <div
+    class="buttons-panel__button"
+    *ngIf="this.currentBoard?.invitedUsers?.length"
+  >
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> List of users </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ul class="users-list">
+          <li
+            *ngFor="
+              let invitedUser of this.currentBoard?.invitedUsers;
+              let i = index
+            "
+          >
+            <p>- {{ invitedUser }}</p>
+            <button mat-button (click)="deleteInvitedUser(i)">
+              <p><mat-icon>close</mat-icon></p>
+            </button>
+          </li>
+        </ul>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>
 <!-- Drop list for columns -->
 <div
   cdkScrollable
   cdkDropList
   cdkDropListOrientation="horizontal"
   class="columns"
+  [ngStyle]="{ 'padding-top': this.isOwner ? '4em' : '1em' }"
   (cdkDropListDropped)="dropColumn($event)"
 >
   <!-- Drop list group for tasks -->
@@ -16,7 +94,42 @@
       <div class="list-wrapper" cdkDrag>
         <div class="list-wrapper__list">
           <div class="list-wrapper__list__header">
-            <p class="title">{{ column.name }}</p>
+            <p class="title" *ngIf="!isOwner">{{ column.name }}</p>
+            <p
+              (click)="updateColumnName(i)"
+              *ngIf="
+                (!isEditable || i !== viewColumnNameFormIndex) &&
+                isOwner
+              "
+              class="title"
+            >
+              {{ column.name }}
+            </p>
+            <div
+              (mousedown)="$event.stopPropagation()"
+              class="input-group"
+              *ngIf="
+                isEditable && i === viewColumnNameFormIndex && isOwner
+              "
+            >
+              <input
+                class="form-control"
+                [(ngModel)]="column.name"
+                (keydown.enter)="updateColumnName(i)"
+                (keydown.escape)="this.isEditable = false"
+                type="text"
+                maxlength="15"
+                #columnNameInput
+              />
+              <button
+                mat-raised-button
+                class="mat-raised-button"
+                color="primary"
+                (click)="updateColumnName(i)"
+              >
+                +
+              </button>
+            </div>
           </div>
           <hr />
           <!-- Drop list for task -->
@@ -42,9 +155,9 @@
           <form
             (ngSubmit)="addNewTask(i)"
             class="list-wrapper__list__form"
-            *ngIf="addNewTaskToggle && i === viewIndex"
+            *ngIf="addNewTaskToggle && i === viewTaskFormIndex"
           >
-            <input placeholder="name" [formControl]="taskName" />
+            <input placeholder="name" [formControl]="taskName" maxlength="15"/>
             <button
               mat-button
               color="primary"
@@ -55,12 +168,9 @@
             </button>
           </form>
 
-          <div
-            class="list-wrapper__task-composer"
-            *ngIf="this.uid === this.currentBoard?.ownerId"
-          >
+          <div class="list-wrapper__task-composer" *ngIf="this.isOwner">
             <a
-              *ngIf="!addNewTaskToggle || i !== viewIndex; else cancel"
+              *ngIf="!addNewTaskToggle || i !== viewTaskFormIndex; else cancel"
               (click)="openTaskForm(i)"
               ><span>&#43;</span>&nbsp;<span>Add new task</span></a
             >
@@ -73,10 +183,7 @@
         </div>
       </div>
     </div>
-    <div
-      class="columns__add-new"
-      *ngIf="this.uid === this.currentBoard?.ownerId"
-    >
+    <div class="columns__add-new" *ngIf="this.isOwner">
       <div
         class="columns__add-new__column-btn"
         *ngIf="!addNewColumnToggle; else form"
@@ -89,7 +196,12 @@
         <form (ngSubmit)="addNewColumn()" class="columns__add-new__column-form">
           <mat-form-field appearance="outline">
             <mat-label>Column name</mat-label>
-            <input matInput [formControl]="columnName" type="text" />
+            <input
+              matInput
+              [formControl]="columnName"
+              type="text"
+              maxlength="15"
+            />
             <mat-error *ngIf="columnName.hasError('required')">
               Name is <span>required</span>
             </mat-error>
