@@ -1,3 +1,4 @@
+@import '~src/assets/styles/_animations';
 $grey-background-color: #5e6c84;
 $hover-background-color: rgba(94, 108, 132, 0.1);
 
@@ -6,6 +7,19 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
   overflow-x: auto;
   white-space: nowrap;
   padding: 1em 0.5em 0 0.5em;
+  .list-wrapper__list__header {
+    .delete-button, .add-button {
+      min-width: 32px;
+    }
+    .delete-button {       
+      opacity: 0;
+    }
+    &:hover {
+      .delete-button {
+        animation: fadeIn 1s forwards;
+      }
+    }
+  }
 
   .columns__column,
   .columns__add-new {
@@ -72,9 +86,8 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
       padding: 2px 8px;
       p {
         font-weight: 600;
-        padding: 4px 8px;
+        padding: 6px 8px;
         margin: 0;
-        vertical-align: center;
       }
 
       a,
@@ -111,6 +124,18 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
       }
       button:not([disabled]):hover {
         background-color: rgb(63, 81, 181, 0.7);
+      }
+    }
+    .list-wrapper__list__task {
+      button {
+        float: right;
+        line-height: inherit;
+        padding: 0;
+        min-width: 24px;
+        opacity: 0;
+      }
+      &:hover button{
+        animation: fadeIn 1s forwards;
       }
     }
     .list-wrapper__task-composer {

@@ -1,6 +1,10 @@
+@import '~src/assets/styles/_animations';
 .main-container {
-  max-width: 1200px;
   margin: 2vw 2vw 0vw 2vw;
+  .list-container {
+    margin: 0 auto;
+    max-width: 1000px;
+  }
   h3 {
     color: rgb(151, 146, 146);
     text-align: center;
@@ -43,13 +47,6 @@
     border: 2px solid red;
 
   }  
-  .board-tile:hover {
-    .close-button {
-      display: inline-block;
-    }
-    background-color: #00000026;
-    transform: rotate(2deg);
-  }
 }
 
 .board-tile {
@@ -72,10 +69,17 @@
     right: 7px;
     padding: 0;
     min-width: auto;
-    display: none;
+    opacity: 0;
     .close-icon {
       vertical-align: inherit !important;
     }
+  }
+  &:hover {
+    .close-button {
+      animation: fadeIn 1s forwards;
+    }
+    background-color: #00000026;
+    transform: rotate(2deg);
   }
 }
 .create-tile {

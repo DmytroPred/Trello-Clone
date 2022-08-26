@@ -25,6 +25,7 @@ import { CurrentUserService } from 'src/app/core/services/current-user/current-u
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { BoardFirebaseService } from 'src/app/core/services/firebase-entities/board-firebase.service';
 import { AsyncValidatorService } from 'src/app/shared/validators/service/async-validator.service';
+import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-board',
@@ -63,7 +64,7 @@ export class PubBoardComponent implements OnInit {
     private route: ActivatedRoute,
     public dialog: MatDialog,
     private currentDataService: CurrentDataService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.route.params
@@ -155,11 +156,11 @@ export class PubBoardComponent implements OnInit {
     }
   }
 
-  dropTask(event: CdkDragDrop<ITask[] | any>, index: number) {
+  dropTask(event: CdkDragDrop<ITask[] | any>, columnId: number) {
     if (this.isOwner) {
       if (event.previousContainer === event.container) {
         moveItemInArray(
-          this.currentBoard.columns?.[index].tasks!,
+          this.currentBoard.columns?.[columnId].tasks!,
           event.previousIndex,
           event.currentIndex
         );
@@ -178,15 +179,15 @@ export class PubBoardComponent implements OnInit {
     }
   }
 
-  openTaskForm(index?: number) {
+  openTaskForm(columnId?: number) {
     this.addNewTaskToggle = !this.addNewTaskToggle;
-    this.viewTaskFormIndex = index!;
+    this.viewTaskFormIndex = columnId!;
     this.taskName.reset();
   }
 
-  addNewTask(index: number) {
-    this.currentBoard.columns?.[index].tasks?.push({
-      taskId: this.currentBoard.columns?.[index].tasks?.length!,
+  addNewTask(columnId: number) {
+    this.currentBoard.columns?.[columnId].tasks?.push({
+      taskId: this.currentBoard.columns?.[columnId].tasks?.length!,
       name: this.taskName.value!,
       text: '',
       assignedUsers: [],
@@ -240,5 +241,47 @@ export class PubBoardComponent implements OnInit {
       this.boardId,
       this.currentBoard
     );
+  }
+
+  deleteColumn(columnId: number) {
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        data: {
+          text: 'Are you sure you want to delete this list?',
+          subtext: 'All tasks inside will be deleted to',
+        },
+      })
+      .afterClosed()
+      .pipe(first())
+      .subscribe((response) => {
+        if (response) {
+          this.currentBoard.columns?.splice(columnId, 1);
+
+          this.boardFirebaseService.updatePublicBoard(this.boardId, {
+            columns: this.currentBoard.columns,
+          });
+        }
+      });
+  }
+
+  deleteTask(taskId: number, columnId: number) {
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        data: {
+          text: 'Are you sure you want to delete this task?',
+          subtext: 'All information inside will be deleted',
+        },
+      })
+      .afterClosed()
+      .pipe(first())
+      .subscribe((response) => {
+        if (response) {
+          this.currentBoard.columns?.[columnId].tasks?.splice(taskId, 1);
+
+          this.boardFirebaseService.updatePublicBoard(this.boardId, {
+            columns: this.currentBoard.columns,
+          });
+        }
+      });
   }
 }

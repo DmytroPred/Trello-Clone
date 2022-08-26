@@ -10,15 +10,15 @@
   <div cdkDropListGroup>
     <div
       class="columns__column"
-      *ngFor="let column of currentBoard?.columns; let i = index"
+      *ngFor="let column of currentBoard?.columns; let columnId = index"
     >
       <!-- Drag column -->
       <div class="list-wrapper" cdkDrag>
         <div class="list-wrapper__list">
-          <div class="list-wrapper__list__header">
+          <div class="list-wrapper__list__header d-flex flex-row">
             <p
-              (click)="updateColumnName(i)"
-              *ngIf="!editColumnNameToggle || i !== viewColumnNameFormIndex"
+              (click)="updateColumnName(columnId)"
+              *ngIf="!isEditable || columnId !== viewColumnNameFormIndex"
               class="title"
             >
               {{ column.name }}
@@ -26,26 +26,29 @@
             <div
               (mousedown)="$event.stopPropagation()"
               class="input-group"
-              *ngIf="editColumnNameToggle && i === viewColumnNameFormIndex"
+              *ngIf="isEditable && columnId === viewColumnNameFormIndex"
             >
               <input
                 class="form-control"
                 [(ngModel)]="column.name"
-                (keydown.enter)="updateColumnName(i)"
-                (keydown.escape)="this.editColumnNameToggle = false"
+                (keydown.enter)="updateColumnName(columnId)"
+                (keydown.escape)="this.isEditable = false"
                 type="text"
                 maxlength="15"
                 #columnNameInput
               />
               <button
                 mat-raised-button
-                class="mat-raised-button"
+                class="add-button rounded"
                 color="primary"
-                (click)="updateColumnName(i)"
+                (click)="updateColumnName(columnId)"
               >
                 +
               </button>
             </div>
+            <!-- deleteColumn button -->
+            <button mat-raised-button color="warn" class="delete-button ms-auto" (click)="deleteColumn(columnId)" *ngIf="!isEditable">X</button>
+            <!-- deleteColumn button -->
           </div>
           <hr />
           <!-- Drop list for task -->
@@ -53,25 +56,29 @@
             class="task-placeholder"
             cdkDropList
             [cdkDropListData]="column.tasks"
-            (cdkDropListDropped)="dropTask($event, i)"
+            (cdkDropListDropped)="dropTask($event, columnId)"
           >
             <!-- Drag task -->
             <div
               class="list-wrapper__list__task"
-              *ngFor="let task of column?.tasks; let id = index"
+              *ngFor="let task of column?.tasks; let taskId = index"
               cdkDrag
             >
-              <div>
-                <div>
-                  <a (click)="openTaskWindow(id, i)">{{ task.name }}</a>
-                </div>
-              </div>
+              <!-- <div>
+                <div> -->
+                  <a (click)="openTaskWindow(taskId, columnId)" class="position-relative">{{ task.name }}
+                    <button mat-raised-button color="warn" 
+                    (click)="deleteTask(taskId, columnId); $event.stopPropagation();">X</button>
+                  </a>
+                  <!-- buttom deleteTask -->
+                <!-- </div>
+              </div> -->
             </div>
           </div>
           <form
-            (ngSubmit)="addNewTask(i)"
+            (ngSubmit)="addNewTask(columnId)"
             class="list-wrapper__list__form"
-            *ngIf="addNewTaskToggle && i === viewTaskFormIndex"
+            *ngIf="addNewTaskToggle && columnId === viewTaskFormIndex"
           >
             <input placeholder="name" [formControl]="taskName" maxlength="15" />
             <button
@@ -86,12 +93,12 @@
 
           <div class="list-wrapper__task-composer">
             <a
-              *ngIf="!addNewTaskToggle || i !== viewTaskFormIndex; else cancel"
-              (click)="openTaskForm(i)"
+              *ngIf="!addNewTaskToggle || columnId !== viewTaskFormIndex; else cancel"
+              (click)="openTaskForm(columnId)"
               ><span>&#43;</span>&nbsp;<span>Add new task</span></a
             >
             <ng-template #cancel>
-              <a #cancel (click)="openTaskForm(i)"
+              <a #cancel (click)="openTaskForm(columnId)"
                 >&nbsp;&nbsp;<span>Cancel adding new task</span></a
               >
             </ng-template>

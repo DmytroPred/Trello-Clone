@@ -14,6 +14,7 @@ import { CurrentDataService } from 'src/app/core/services/current-data/current-d
 import { first, switchMap } from 'rxjs';
 import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
 import { BoardFirebaseService } from 'src/app/core/services/firebase-entities/board-firebase.service';
+import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-board',
@@ -26,7 +27,7 @@ export class BoardComponent implements OnInit {
 
   clickedColumnIndex!: number;
 
-  uid!: string | undefined;
+  uid!: string;
   boardId!: number;
 
   currentBoardFromServer!: IBoard;
@@ -34,7 +35,7 @@ export class BoardComponent implements OnInit {
 
   addNewTaskToggle: boolean = false;
   addNewColumnToggle: boolean = false;
-  editColumnNameToggle: boolean = false;
+  isEditable: boolean = false;
 
   columnName = new FormControl('', [Validators.required]);
   taskName = new FormControl('', [Validators.required]);
@@ -106,10 +107,10 @@ export class BoardComponent implements OnInit {
     });
   }
 
-  dropTask(event: CdkDragDrop<ITask[] | any>, index: number) {
+  dropTask(event: CdkDragDrop<ITask[] | any>, columnId: number) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
-        this.currentBoard.columns?.[index].tasks!,
+        this.currentBoard.columns?.[columnId].tasks!,
         event.previousIndex,
         event.currentIndex
       );
@@ -129,15 +130,15 @@ export class BoardComponent implements OnInit {
     );
   }
 
-  openTaskForm(index?: number) {
+  openTaskForm(columnId?: number) {
     this.addNewTaskToggle = !this.addNewTaskToggle;
-    this.viewTaskFormIndex = index!;
+    this.viewTaskFormIndex = columnId!;
     this.taskName.reset();
   }
 
-  addNewTask(index: number) {
-    this.currentBoard.columns?.[index].tasks?.push({
-      taskId: this.currentBoard.columns?.[index].tasks?.length!,
+  addNewTask(columnId: number) {
+    this.currentBoard.columns?.[columnId].tasks?.push({
+      taskId: this.currentBoard.columns?.[columnId].tasks?.length!,
       name: this.taskName.value!,
       text: '',
     });
@@ -174,16 +175,58 @@ export class BoardComponent implements OnInit {
     });
   }
 
-  updateColumnName(index: number) {
-    this.editColumnNameToggle = !this.editColumnNameToggle;
-    this.viewColumnNameFormIndex = index;
+  updateColumnName(columnId: number) {
+    this.isEditable = !this.isEditable;
+    this.viewColumnNameFormIndex = columnId;
 
-    if (this.editColumnNameToggle) {
+    if (this.isEditable) {
       setTimeout(() => this._inputElement.nativeElement.focus(), 25);
     }
 
-    this.boardFirebaseService.updatePublicBoard(this.boardId, {
-      columns: this.currentBoard.columns,
+    this.boardFirebaseService.updatePrivateBoard(this.uid, this.boardId, {
+      columns: this.currentBoard.columns
     });
+  }
+
+  deleteColumn(columnId: number) {
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        data: {
+          text: 'Are you sure you want to delete this list?',
+          subtext: 'All tasks inside will be deleted to',
+        },
+      })
+      .afterClosed()
+      .pipe(first())
+      .subscribe((response) => {
+        if (response) {
+          this.currentBoard.columns?.splice(columnId, 1);
+
+          this.boardFirebaseService.updatePrivateBoard(this.uid, this.boardId, {
+            columns: this.currentBoard.columns
+          })
+        }
+      });
+  }
+
+  deleteTask(taskId: number, columnId: number) {
+    this.dialog
+      .open(ConfirmationDialogComponent, {
+        data: {
+          text: 'Are you sure you want to delete this task?',
+          subtext: 'All information inside will be deleted',
+        },
+      })
+      .afterClosed()
+      .pipe(first())
+      .subscribe((response) => {
+        if (response) {
+          this.currentBoard.columns?.[columnId].tasks?.splice(taskId, 1);
+
+          this.boardFirebaseService.updatePrivateBoard(this.uid, this.boardId, {
+            columns: this.currentBoard.columns
+          });
+        }
+      });
   }
 }

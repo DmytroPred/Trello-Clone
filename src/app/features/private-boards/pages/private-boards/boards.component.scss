@@ -1,6 +1,10 @@
+@import '~src/assets/styles/_animations';
 .main-container {
-  max-width: 1200px;
   margin: 2vw 2vw 0vw 2vw;
+  .list-container {
+    margin: 0 auto;
+    max-width: 1000px;
+  }
   h3 {
     color: rgb(151, 146, 146);
     text-align: center;
@@ -46,7 +50,8 @@ a {
     right: 7px;
     padding: 0;
     min-width: auto;
-    display: none;
+    // display: none;
+    opacity: 0;
     .close-icon {
       vertical-align: inherit!important;
     }
@@ -55,7 +60,8 @@ a {
 
 .board-tile:hover {
   .close-button {
-    display: inline-block;
+    // display: inline-block;
+    animation: fadeIn 1s forwards;
   }
   background-color: #00000026;
   transform: rotate(2deg);
