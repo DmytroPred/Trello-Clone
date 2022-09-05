@@ -9,6 +9,10 @@ import { IUser } from '../../models/User';
 })
 export class UserFirebaseService {
   constructor(private angularFirestore: AngularFirestore) {}
+  
+  updateUserById(userId: string, updateData: IUser): Promise<void> {
+    return this.angularFirestore.doc(`user/${userId}`).update(updateData);
+  }
 
   getUserDocById(userId: string): Observable<IUser> {
     return this.angularFirestore

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/core/services/authentication.service';
 import { CurrentUserService } from '../../services/current-user/current-user.service';
 
@@ -9,13 +12,15 @@ import { CurrentUserService } from '../../services/current-user/current-user.ser
 })
 export class HeaderComponent implements OnInit {
   constructor(
+    private afAuth: AngularFireAuth,
+    private router: Router,
     public currentUserService: CurrentUserService,
-    private authenticationService: AuthenticationService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   signOut() {
-    this.authenticationService.signOut();
+    this.afAuth.signOut();
+    this.router.navigateByUrl('');
   }
 }

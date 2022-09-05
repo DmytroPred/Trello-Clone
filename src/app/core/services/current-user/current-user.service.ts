@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { BehaviorSubject, Observable, first, switchMap, shareReplay } from 'rxjs';
+import { Observable, switchMap, shareReplay, map } from 'rxjs';
 import { IUser } from '../../models/User';
 import { UserFirebaseService } from '../firebase-entities/user-firebase.service';
 @Injectable({
   providedIn: 'root',
 })
 export class CurrentUserService {
-  public isUserLoggedIn = new BehaviorSubject<boolean>(false);
-  // public currentUserId = new BehaviorSubject<string>('');
   public currentUser$!: Observable<IUser>;
+  public isUserLoggedIn$: Observable<boolean>;
+  
   constructor(
-    private auth: Auth,
     private afAuth: AngularFireAuth,
     private userFirebaseService: UserFirebaseService
   ) {
@@ -24,10 +21,8 @@ export class CurrentUserService {
       shareReplay(1)
     );
 
-    this.auth.onAuthStateChanged((user) => {
-      if (user) {
-        this.isUserLoggedIn.next(true);
-      } else console.log(user);
-    });
+    this.isUserLoggedIn$ = this.afAuth.authState.pipe(
+      map(user => user !== null)
+    );
   }
 }

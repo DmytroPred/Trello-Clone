@@ -14,6 +14,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { LettersAvatarModule } from 'ngx-letters-avatar';
 import { TimeagoModule} from 'ngx-timeago';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+// import { NgxEditorModule } from 'ngx-editor';
+
 @NgModule({
   declarations: [
     PageNotFoundComponent,
@@ -33,7 +35,8 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     MatIconModule,
     MatExpansionModule,
     LettersAvatarModule,
-    TimeagoModule
+    TimeagoModule,
+    // NgxEditorModule
   ],
   exports: [LoadSpinnerComponent]
 })

@@ -5,22 +5,23 @@
     >
       <a
         class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
-        routerLink="public-boards"
+        routerLink=""
       >
         <img class="bi me-2 logo" src="../assets/icons/fox.png" />
       </a>
       <ul
         class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
       >
-        <!-- <li><a href="#" class="nav-link px-2 text-white">Home</a></li>
-        <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
-        <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li> -->
+        <li><a routerLink="" class="nav-link px-2 text-white">Main</a></li>
+        <li>
+          <a routerLink="profile" class="nav-link px-2 text-white" *ngIf="(currentUserService.isUserLoggedIn$ | async)">Profile</a>
+        </li>
         <li><a routerLink="public-boards" class="nav-link px-2 text-white">Public boards</a></li>
         <li>
-          <a routerLink="private-boards" class="nav-link px-2 text-white" *ngIf="(currentUserService.isUserLoggedIn | async)">Private boards</a>
+          <a routerLink="private-boards" class="nav-link px-2 text-white" *ngIf="(currentUserService.isUserLoggedIn$ | async)">Private boards</a>
         </li>
       </ul>
-      <div *ngIf="!(currentUserService.isUserLoggedIn | async); else logout">
+      <div *ngIf="!(currentUserService.isUserLoggedIn$ | async); else logout">
         <button
           routerLink="authorization/login"
           type="button"

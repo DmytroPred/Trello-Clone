@@ -1,0 +1,73 @@
+<div class="container mt-5 mb-5">
+    <div class="row container__content">
+        <div class="col">    
+            <div class="row">
+                <h1>Foxxy gives your team opportunity to work.</h1>
+                <p>Collaborate, manage projects, and reach new productivity peaks. From high rises to the home office, the way your team works is unique-accomplish it all with Foxxy</p>
+            </div>
+            <div class="row"></div>
+        </div>
+        <div class="col container__image">    
+            <img width="550px" height="450px" src="../../../assets/img/quiz-intro-image-2000x1720.png">
+        </div>
+    </div>
+    <div class="row container__content">
+        <div class="col container__image">
+            <img src="../../../assets/img/communication-improves-as-part-of-benefits-of-working-as-a-team-1.png">
+        </div>
+        <div class="col">
+            <h1>It’s more than work. It’s a way of working together.</h1>
+            <p>Start with a Foxxy board, lists, and cards. Customize and expand with more features as your teamwork grows. Manage projects, organize tasks, and build team spirit—all in one place.</p>
+        </div>
+    </div>
+    <div class="row container__content">
+        <div class="col">
+            <h1>Features to help your team succeed.</h1>
+            <p>Powering a productive team means using a powerful tool (and plenty of snacks). From meetings and projects to events and goal setting, Foxxy’s intuitive features give any team the ability to quickly set up and customize workflows for just about anything.</p>
+        </div>
+        <div class="col container__image">
+            <img src="../../../assets/img/teamwork_1017326208-1080x627.jpg">
+        </div>
+    </div>
+
+    <owl-carousel-o [options]="carouselOptions" class="slide">
+      <ng-container *ngFor="let slide of slides">
+        <ng-template carouselSlide>
+          <div class="client-card">
+            <div>
+              <p class="client-card__feedback">{{ slide.feedback }}</p>
+              <div class="client-card__representative d-flex">
+                <p><strong>{{ slide.employeeName }}</strong></p>
+                <img class="client-card__logo" src="{{slide.image}}">
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ng-container>
+    </owl-carousel-o>
+
+    <div class="row container__content">
+      <div class="col container__flex">
+        <img src="../../../assets/img/tag.svg" width="103" height="140">
+        <div>
+          <h3>See Foxxy pricing</h3>
+          <p>Whether you’re a team of 2 or 2,000, Foxxy can be customized for your organization. Explore which option is best for you.</p>
+        </div>
+      </div>
+      <div class="col container__flex">
+        <img src="../../../assets/img/compass.svg" width="103" height="141">
+        <div>
+          <h3>What is Foxxy?</h3>
+          <p>Foxxy is the visual tool that empowers your team to manage any type of project, workflow, or task tracking.</p>
+        </div>
+      </div>
+      <div class="col container__flex">
+        <img src="../../../assets/img/solutions.svg" width="103" height="138">
+        <div>
+          <h3>Discover Foxxy Enterprise</h3>
+          <p>The productivity tool teams love, paired with the features and security needed for scale.</p>
+        </div>
+      </div>
+    </div>
+</div>
+<app-footer></app-footer>

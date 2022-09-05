@@ -1,6 +1,6 @@
 <div class="main-container">
   <h3>Public Workspaces</h3>
-  <div class="sort-buttons">
+  <div class="sort-buttons" *ngIf="this.currentUserService.isUserLoggedIn$ | async">
     <button mat-raised-button color="primary" (click)="sortByUserBoards()">
       sort by your
     </button>
@@ -40,7 +40,7 @@
           </a>
         </div>
       </li>
-      <li *ngIf="this.currentUserService.isUserLoggedIn | async">
+      <li *ngIf="this.currentUserService.isUserLoggedIn$ | async">
         <div class="board-tile create-tile">
           <a (click)="openBoardModal()">Create new board</a>
         </div>

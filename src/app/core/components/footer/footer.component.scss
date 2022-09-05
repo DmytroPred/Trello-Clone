@@ -1,0 +1,40 @@
+.wrapper {
+    p {
+        margin-top: 14px;
+        margin-bottom: 0px;
+    }
+    .container {
+        display: flex;
+        height: 100%;
+        padding: 24px 14px;
+        &__logo {
+            width: 40px;
+            align-items: center;
+        }
+        &__login {
+            color: white;
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+        &__list {
+            display: flex;
+            ul {
+                margin-bottom: 0;
+            }
+            margin: auto;
+        }
+    }
+
+}
+ul {
+    list-style-type: none;
+    a {
+        color: white;
+        text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
+    }
+}

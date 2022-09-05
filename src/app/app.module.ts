@@ -13,6 +13,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 
 import { TimeagoModule } from 'ngx-timeago';
+import { MainPageModule } from './features/main/main.module';
+// import { NgxEditorModule } from 'ngx-editor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,6 +25,8 @@ import { TimeagoModule } from 'ngx-timeago';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    MainPageModule,
+    // NgxEditorModule,
     TimeagoModule.forChild(),
 
     provideFirebaseApp(() => initializeApp(environment.firebase)),

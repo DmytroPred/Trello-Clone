@@ -1,0 +1,46 @@
+<app-load-spinner *ngIf="isLoading"></app-load-spinner>
+<div class="container">
+    <mat-card>
+        <mat-toolbar color="primary" class="bg-dark">Edit Profile</mat-toolbar>
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="user-info">
+            <mat-form-field appearance="fill">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="username" type="username" />
+                <mat-error *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched"
+                    >{{ getNameErrorMessage('username') }}
+                    <span *ngIf="profileForm.controls['username'].errors?.['usernameExists']"
+                        >Username already exist</span
+                    >
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" type="email" />
+                <mat-error *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+                    >{{ getNameErrorMessage('email') }}
+                    <span *ngIf="profileForm.controls['email'].errors?.['emailExist']">Email already exist</span>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" [type]="isPasswordHidden ? 'password' : 'text'" />
+                <mat-error *ngIf="profileForm.get('password')?.invalid && profileForm.get('password')?.touched">{{
+                    getNameErrorMessage('password')
+                }}</mat-error>
+                <button type="button" mat-icon-button matSuffix (click)="isPasswordHidden = !isPasswordHidden">
+                    <mat-icon>
+                        {{ isPasswordHidden ? 'visibility_off' : 'visibility' }}
+                    </mat-icon>
+                </button>
+            </mat-form-field>
+            <button
+                mat-raised-button
+                color="primary"
+                type="submit"
+                [disabled]="profileForm.invalid || (profileForm.get('username')!.value === this.user.username && profileForm.get('email')!.value === this.user.email && profileForm.get('password')!.value === this.user.password)"
+            >
+                Change
+            </button>
+        </form>
+    </mat-card>
+</div>

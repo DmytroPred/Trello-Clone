@@ -46,9 +46,7 @@
                 +
               </button>
             </div>
-            <!-- deleteColumn button -->
             <button mat-raised-button color="warn" class="delete-button ms-auto" (click)="deleteColumn(columnId)" *ngIf="!isEditable">X</button>
-            <!-- deleteColumn button -->
           </div>
           <hr />
           <!-- Drop list for task -->
@@ -64,15 +62,10 @@
               *ngFor="let task of column?.tasks; let taskId = index"
               cdkDrag
             >
-              <!-- <div>
-                <div> -->
                   <a (click)="openTaskWindow(taskId, columnId)" class="position-relative">{{ task.name }}
                     <button mat-raised-button color="warn" 
                     (click)="deleteTask(taskId, columnId); $event.stopPropagation();">X</button>
                   </a>
-                  <!-- buttom deleteTask -->
-                <!-- </div>
-              </div> -->
             </div>
           </div>
           <form

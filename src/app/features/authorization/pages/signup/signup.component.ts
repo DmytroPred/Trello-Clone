@@ -1,22 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-// import { AngularFirestore } from '@angular/fire/compat/firestore';
 import {
-  // AbstractControl,
-  // AsyncValidatorFn,
   FormControl,
   FormGroup,
-  // ValidationErrors,
   Validators,
 } from '@angular/forms';
-// import {
-//   Observable,
-//   first,
-//   map,
-//   debounceTime,
-//   switchMap,
-//   distinctUntilChanged,
-// } from 'rxjs';
-// import { UserFirebaseService } from 'src/app/core/services/firebase-entities/user-firebase.service';
 import { CustomMatchValidator } from 'src/app/shared/validators/custom-match-validator';
 import { passwordValidator } from 'src/app/shared/validators/password-validator';
 import { AsyncValidatorService } from 'src/app/shared/validators/service/async-validator.service';
@@ -28,7 +15,6 @@ import { AuthenticationService } from '../../../../core/services/authentication.
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent implements OnInit {
-  // disableSubmitButton: boolean = false;
   isLoading: boolean = false;
   signupForm: FormGroup = new FormGroup(
     {
@@ -40,7 +26,6 @@ export class SignupComponent implements OnInit {
           Validators.maxLength(12),
         ],
         [this.asyncValidatorService.usernameExistValidator('signup')]
-        // [this.usernameExistValidator()]
       ),
       email: new FormControl(
         null,
@@ -67,14 +52,10 @@ export class SignupComponent implements OnInit {
   }
   constructor(
     private authenticationService: AuthenticationService,
-    // private userFirebaseService: UserFirebaseService,
     public asyncValidatorService: AsyncValidatorService,
-    // private afStore: AngularFirestore
   ) {}
 
-  ngOnInit(): void {
-    // this.asyncValidatorService._isCheckDataBase.subscribe()
-  }
+  ngOnInit(): void { }
 
   getNameErrorMessage(inputField: string) {
     if (this.signupForm.hasError('required', inputField)) {
@@ -97,53 +78,4 @@ export class SignupComponent implements OnInit {
       .signUp(this.signupForm.value)
       .finally(() => (this.isLoading = false));
   }
-
-  // Replace functionality to the service
-  // emailExistValidator(): AsyncValidatorFn {
-  //   return (control: AbstractControl): Observable<ValidationErrors | null> => {
-  //     // this.disableSubmitButton = true;
-  //     return control.valueChanges.pipe(
-  //       debounceTime(1000),
-  //       distinctUntilChanged(),
-  //       first(),
-  //       switchMap((controlValue) => {
-  //         return this.userFirebaseService.getUserWhere('email', '==', controlValue)
-  //         // return this.afStore
-  //         //   .collection('user', (ref) => ref.where('email', '==', controlValue))
-  //         //   .valueChanges()
-  //           .pipe(
-  //             first(),
-  //             map((res) => {
-  //               // this.disableSubmitButton = false;
-  //               return res.length ? { emailExist: true } : null;
-  //             })
-  //           );
-  //       })
-  //     );
-  //   };
-  // }
-
-  // usernameExistValidator(): AsyncValidatorFn {
-  //   return (control: AbstractControl): Observable<ValidationErrors | null> => {
-  //     this.disableSubmitButton = true;
-  //     return control.valueChanges.pipe(
-  //       debounceTime(1000),
-  //       distinctUntilChanged(),
-  //       first(),
-  //       switchMap((controlValue) => {
-  //         return this.afStore
-  //           .collection('user', (ref) =>
-  //             ref.where('username', '==', controlValue)
-  //           )
-  //           .valueChanges()
-  //           .pipe(
-  //             first(),
-  //             map((res) => {
-  //               this.disableSubmitButton = false;
-  //               return res.length ? { usernameExist: true } : null})
-  //           );
-  //       })
-  //     );
-  //   };
-  // }
 }

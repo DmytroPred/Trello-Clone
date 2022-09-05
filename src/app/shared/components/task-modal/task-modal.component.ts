@@ -1,28 +1,29 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { IColumn } from 'src/app/core/models/Column';
 import { CurrentDataService } from 'src/app/core/services/current-data/current-data.service';
 import { ITask } from 'src/app/core/models/Task';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { IBoard } from 'src/app/core/models/Board';
 import { BoardFirebaseService } from 'src/app/core/services/firebase-entities/board-firebase.service';
 import { UserFirebaseService } from 'src/app/core/services/firebase-entities/user-firebase.service';
 import { AsyncValidatorService } from '../../validators/service/async-validator.service';
 import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
+import { Editor, Toolbar } from 'ngx-editor';
 
 @Component({
   selector: 'app-task-modal',
   templateUrl: './task-modal.component.html',
-  styleUrls: ['./task-modal.component.scss'],
+  styleUrls: ['./task-modal.component.scss']
 })
-export class TaskModalComponent implements OnInit {
+export class TaskModalComponent implements OnInit, OnDestroy {
   isAssignFormOpen: boolean = false;
   isEditable: boolean = false;
   isOwner!: boolean;
   openDescriptionFormToggle: boolean = false;
 
+  assignedUsers: string[] = [];
   uid!: string;
   username!: string;
   initTaskName!: string;
@@ -31,6 +32,19 @@ export class TaskModalComponent implements OnInit {
   selectedColumn!: IColumn;
   selectedTask!: ITask;
 
+  // editor!: Editor;
+  // toolbar: Toolbar = [
+  //   ['bold', 'italic'],
+  //   ['underline', 'strike'],
+  //   ['code', 'blockquote'],
+  //   ['ordered_list', 'bullet_list'],
+  //   [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
+  //   ['link', 'image'],
+  //   ['text_color', 'background_color'],
+  //   ['align_left', 'align_center', 'align_right', 'align_justify'],
+  // ];
+  // html!: '';
+  
   @ViewChild('taskInput') _taskInput!: ElementRef;
 
   description = new FormControl('', [Validators.maxLength(128)]);
@@ -40,6 +54,43 @@ export class TaskModalComponent implements OnInit {
     [Validators.required],
     [this.asyncValidatorService.usernameExistValidator('invite')]
   );
+
+  constructor(
+    public asyncValidatorService: AsyncValidatorService,
+    private boardFirebaseService: BoardFirebaseService,
+    private afAuth: AngularFireAuth,
+    private currentDataService: CurrentDataService,
+    public currentUserService: CurrentUserService,
+    private userFirebaseService: UserFirebaseService
+  ) {}
+
+  ngOnInit(): void {
+    // this.editor = new Editor();
+    this.afAuth.user.pipe(first()).subscribe((res) => {
+      if (res) {
+        this.username = res.displayName!;
+        this.uid = res!.uid;
+        this.uid === this.currentBoard.ownerId
+          ? (this.isOwner = true)
+          : (this.isOwner = false);
+      }
+    });
+
+    this.currentDataService._currentBoard.pipe(first()).subscribe((result) => {
+      this.currentBoard = result;
+    });
+
+    this.currentDataService._currentColumn.pipe(first()).subscribe((result) => {
+      this.selectedColumn = result;
+    });
+
+    this.currentDataService._currentTask.pipe(first()).subscribe((result) => {
+      (this.selectedTask = result); 
+      this.selectedTask.assignedUsers?.map(uid => this.userFirebaseService.getUserDocById(uid).pipe(first()).subscribe(user => this.assignedUsers.push(user.username)));
+      this.description.setValue(result.text!);
+      this.initTaskName = this.selectedTask.name!
+    });
+  }
 
   updateTaskName() {
     this.isEditable = !this.isEditable;
@@ -67,41 +118,7 @@ export class TaskModalComponent implements OnInit {
       }
     }
   }
-
-  constructor(
-    public asyncValidatorService: AsyncValidatorService,
-    private boardFirebaseService: BoardFirebaseService,
-    private afAuth: AngularFireAuth,
-    private currentDataService: CurrentDataService,
-    public currentUserService: CurrentUserService
-  ) {}
-
-  ngOnInit(): void {
-    this.afAuth.user.pipe(first()).subscribe((res) => {
-      if (res) {
-        this.username = res.displayName!;
-        this.uid = res!.uid;
-        this.uid === this.currentBoard.ownerId
-          ? (this.isOwner = true)
-          : (this.isOwner = false);
-      }
-    });
-
-    this.currentDataService._currentBoard.pipe(first()).subscribe((result) => {
-      this.currentBoard = result;
-    });
-
-    this.currentDataService._currentColumn.pipe(first()).subscribe((result) => {
-      this.selectedColumn = result;
-    });
-
-    this.currentDataService._currentTask.pipe(first()).subscribe((result) => {
-      (this.selectedTask = result); 
-      this.description.setValue(result.text!);
-      this.initTaskName = this.selectedTask.name!
-    });
-  }
-
+  
   openCloseDescriptionForm() {
     this.openDescriptionFormToggle = !this.openDescriptionFormToggle;
     this.description.reset(this.selectedTask?.text);
@@ -126,20 +143,21 @@ export class TaskModalComponent implements OnInit {
     this.openCloseDescriptionForm();
   }
 
-  addComment() {
+ addComment() {
     this.selectedTask.comments?.unshift({
       ownerName: this.username,
       ownerId: this.uid,
       text: this.commentForm.value!,
       creationDate: Date.now(),
     });
-
+ 
     this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
       columns: this.currentBoard.columns,
     });
 
     this.commentForm.reset();
   }
+
   openCloseForm() {
     this.isAssignFormOpen = !this.isAssignFormOpen;
     this.assigningTaskForm.reset();
@@ -147,11 +165,14 @@ export class TaskModalComponent implements OnInit {
 
   assignTask() {
     this.isAssignFormOpen = !this.isAssignFormOpen;
-    this.selectedTask.assignedUsers?.push(this.assigningTaskForm.value!);
-
-    this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
-      columns: this.currentBoard.columns,
-    });
+    this.assignedUsers?.push(this.assigningTaskForm.value!);
+    this.userFirebaseService.getUserWhere('username', '==', this.assigningTaskForm.value!).pipe(first()).subscribe(user => { 
+        this.selectedTask.assignedUsers?.push(user[0].uid)
+        this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
+          columns: this.currentBoard.columns,
+        });
+      }
+    );
   }
 
   deleteAssignedUser(index: number) {
@@ -159,5 +180,9 @@ export class TaskModalComponent implements OnInit {
     this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
       columns: this.currentBoard.columns,
     });
+  }
+
+  ngOnDestroy(): void {
+    // this.editor.destroy();
   }
 }

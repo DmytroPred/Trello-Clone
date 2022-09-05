@@ -1,11 +1,7 @@
 import {
-  AfterViewInit,
   Component,
-  DoCheck,
   ElementRef,
-  OnChanges,
   OnInit,
-  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { IBoard } from 'src/app/core/models/Board';
@@ -26,6 +22,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { BoardFirebaseService } from 'src/app/core/services/firebase-entities/board-firebase.service';
 import { AsyncValidatorService } from 'src/app/shared/validators/service/async-validator.service';
 import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { UserFirebaseService } from 'src/app/core/services/firebase-entities/user-firebase.service';
 
 @Component({
   selector: 'app-board',
@@ -44,6 +41,7 @@ export class PubBoardComponent implements OnInit {
 
   uid!: string;
 
+  invitedUsersNames: string[] = [];
   currentBoard!: IBoard;
 
   @ViewChild('columnNameInput', { static: false })
@@ -63,7 +61,8 @@ export class PubBoardComponent implements OnInit {
     public currentUserService: CurrentUserService,
     private route: ActivatedRoute,
     public dialog: MatDialog,
-    private currentDataService: CurrentDataService
+    private currentDataService: CurrentDataService,
+    private userFirebaseService: UserFirebaseService
   ) {}
 
   ngOnInit(): void {
@@ -76,17 +75,32 @@ export class PubBoardComponent implements OnInit {
         this.uid = res!.uid;
       }
     });
+
+    // this.boardFirebaseService
+    //   .getPublicBoard(this.boardId)
+    //   .pipe(first())
+    //   .subscribe((res) => {
+    //     if (res) {
+    //       this.currentBoard = res as IBoard;
+    //       this.uid === this.currentBoard.ownerId
+    //         ? (this.isOwner = true)
+    //         : (this.isOwner = false);
+    //     } else console.log('Something goes wrong');
+    //   });
+
     this.boardFirebaseService
-      .getPublicBoard(this.boardId)
-      .pipe(first())
-      .subscribe((res) => {
-        if (res) {
-          this.currentBoard = res as IBoard;
-          this.uid === this.currentBoard.ownerId
-            ? (this.isOwner = true)
-            : (this.isOwner = false);
-        } else console.log('Something goes wrong');
-      });
+    .getPublicBoard(this.boardId)
+    .pipe(first())
+    .subscribe(res => {
+      if (res) {
+        this.currentBoard = res as IBoard;
+        this.uid === this.currentBoard.ownerId
+          ? (this.isOwner = true)
+          : (this.isOwner = false);
+          
+        this.currentBoard.invitedUsers?.map(uid => this.userFirebaseService.getUserDocById(uid).pipe(first()).subscribe(user => this.invitedUsersNames.push(user.username)));
+      } else console.log('Something goes wrong');
+    });
   }
 
   openColumnForm() {
@@ -226,16 +240,31 @@ export class PubBoardComponent implements OnInit {
     });
   }
 
+  // inviteUserToBoard() {
+  //   this.currentBoard.invitedUsers?.push(this.username.value!);
+  //   this.boardFirebaseService.updatePublicBoard(this.boardId, {
+  //     invitedUsers: this.currentBoard.invitedUsers,
+  //   });
+
+  //   this.username.reset();
+  // }
   inviteUserToBoard() {
-    this.currentBoard.invitedUsers?.push(this.username.value!);
-    this.boardFirebaseService.updatePublicBoard(this.boardId, {
-      invitedUsers: this.currentBoard.invitedUsers,
+    this.userFirebaseService.getUserWhere('username', '==', this.username.value!)
+      .pipe(first())
+      .subscribe(user => {
+        this.currentBoard.invitedUsers?.push(user[0].uid);
+        this.boardFirebaseService.updatePublicBoard(this.boardId, {
+      invitedUsers: this.currentBoard.invitedUsers
     });
+  });
+    this.invitedUsersNames.push(this.username.value!);
 
     this.username.reset();
   }
 
   deleteInvitedUser(index: number) {
+    this.invitedUsersNames.splice(index, 1);
+
     this.currentBoard.invitedUsers?.splice(index, 1);
     this.boardFirebaseService.updatePublicBoard(
       this.boardId,
