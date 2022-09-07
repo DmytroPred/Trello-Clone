@@ -14,7 +14,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { LettersAvatarModule } from 'ngx-letters-avatar';
 import { TimeagoModule} from 'ngx-timeago';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
-// import { NgxEditorModule } from 'ngx-editor';
+import { NgxEditorModule } from 'ngx-editor';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+
 
 @NgModule({
   declarations: [
@@ -36,7 +39,9 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     MatExpansionModule,
     LettersAvatarModule,
     TimeagoModule,
-    // NgxEditorModule
+    NgxEditorModule,
+    EmojiModule,
+    PickerModule
   ],
   exports: [LoadSpinnerComponent]
 })

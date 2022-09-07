@@ -57,36 +57,21 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title> List of users </mat-panel-title>
-        <!-- </mat-expansion-panel-header>
-        <ul class="users-list">
-          <li
-            *ngFor="
-              let invitedUser of this.currentBoard?.invitedUsers;
-              let i = index
-            "
-          >
-            <p>- {{ invitedUser }}</p>
-            <button mat-button (click)="deleteInvitedUser(i)">
-              <p><mat-icon>close</mat-icon></p>
-            </button>
-          </li>
-        </ul>
-      </mat-expansion-panel> -->
-    </mat-expansion-panel-header>
-    <ul class="users-list">
-      <li
-        *ngFor="
-          let invitedUser of this.invitedUsersNames;
-          let i = index
-        "
-      >
-        <p>- {{ invitedUser }}</p>
-        <button mat-button (click)="deleteInvitedUser(i)">
-          <p><mat-icon>close</mat-icon></p>
-        </button>
-      </li>
-    </ul>
-  </mat-expansion-panel>
+        </mat-expansion-panel-header>
+            <ul class="users-list">
+              <li
+                *ngFor="
+                  let invitedUser of this.invitedUsersNames;
+                  let i = index
+                "
+              >
+                <p>- {{ invitedUser }}</p>
+                <button mat-button (click)="deleteInvitedUser(i)">
+                  <p><mat-icon>close</mat-icon></p>
+                </button>
+              </li>
+            </ul>
+        </mat-expansion-panel>
     </mat-accordion>
   </div>
 </div>

@@ -41,6 +41,7 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
     }
   }
   .card {
+    position: unset;
     margin-top: 1.5rem;
   }
   .modal-close-button {
@@ -61,6 +62,22 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
     padding-left: 5px;
     font-size: 12px;
     z-index: 5;
+  }
+  .comment-section {
+    &__input {
+      position: relative;
+      .form-outline {
+        position: relative; 
+      }
+      button {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    
+        border: 0;
+        background: transparent;
+      }
+    }
   }
   .window__content__title,
   .window__header__title {
@@ -194,14 +211,6 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
     display: flex;
     flex-direction: column;
     margin-top: 1rem;
-    .description {
-      box-sizing: content-box;
-      overflow: auto;
-      min-height: 108px;
-      border: 1px solid #ceb4da;
-      border-radius: 0.25rem;
-      padding: 0.375rem 0.75rem;
-    }
   }
 }
 

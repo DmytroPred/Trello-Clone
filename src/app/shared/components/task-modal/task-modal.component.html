@@ -10,7 +10,7 @@
   <div class="window__header">
     <div class="window__header__title">
       <h2 *ngIf="!this.isEditable" (click)="updateTaskName()">
-        {{ selectedTask?.name }}
+        {{ selectedTask.name }}
       </h2>
       <div>
         <input
@@ -91,7 +91,7 @@
       </ng-template>
     </div>
     <div class="window__header__column-name">
-      <p>list: {{ selectedColumn?.name }}</p>
+      <p>list: {{ selectedColumn.name }}</p>
       <mat-accordion *ngIf="this.selectedTask?.assignedUsers?.length">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
@@ -134,11 +134,10 @@
         (click)="isOwner ? openCloseDescriptionForm() : false"
         class="task-description"
       >
-        <textarea
-          [readonly]="true"
-          cdkTextareaAutosize
+        <div
           class="window__content__description__add-content"
-          >{{ selectedTask?.text }}</textarea
+          [innerHTML]="selectedTask.text"
+          ></div
         >
       </div>
       <ng-template #descriptionForm>
@@ -154,22 +153,14 @@
             (ngSubmit)="saveDescription()"
             class="window__content__description__edit-container"
           >
-            <textarea
-              class="description"
+            <div class="NgxEditor__Wrapper">
+              <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+              <ngx-editor
+              [editor]="editor"
               [formControl]="description"
-              type="string"
-              cdkTextareaAutosize
-              placeholder="Add a detailed description..."
               #textArea
-            ></textarea>
-            <!-- <ngx-editor
-            class="description"
-            [formControl]="description"
-            type="string"
-            cdkTextareaAutosize
-            placeholder="Add a detailed description..."
-            #textArea
-          ></ngx-editor> -->
+              ></ngx-editor>
+            </div>
             <div class="form-buttons">
               <button
                 mat-raised-button
@@ -208,16 +199,20 @@
         "
       >
         <label class="form-label">Add comment</label>
+      <div class="comment-section__input">
         <textarea
-          type="string"
-          [formControl]="commentForm"
-          class="form-control shadow-none"
-          rows="3"
-          cdkTextareaAutosize
-          placeholder="Type comment..."
-          aria-label="Type comment..."
-        >
-        </textarea>
+        type="string"
+        [formControl]="commentForm"
+        class="form-control shadow-none"
+        rows="3"
+        cdkTextareaAutosize
+        placeholder="Type comment..."
+        aria-label="Type comment..."
+      >
+      </textarea> 
+        <button class="comment-section__emotes-btn" (click)="isEmojiPicker = !isEmojiPicker">😀</button>
+      </div>
+      <emoji-mart *ngIf="isEmojiPicker" (emojiSelect)="addEmoji($event)" title="Pick your emoji…" emoji="point_up" [ngStyle]="{ position: 'absolute', right: '0px' }"></emoji-mart>
         <div class="form-buttons" *ngIf="commentForm.value">
           <button
             mat-raised-button
@@ -236,7 +231,7 @@
       <div *ngFor="let comment of this.selectedTask.comments">
         <div class="card mb-4">
           <div class="card-body">
-            <p>{{ comment.text }}</p>
+            <div [innerHTML]="comment.text"></div>
             <div class="d-flex justify-content-between">
               <div class="d-flex flex-row align-items-center">
                 <ngx-letters-avatar

@@ -11,16 +11,16 @@ import { UserFirebaseService } from 'src/app/core/services/firebase-entities/use
 import { AsyncValidatorService } from '../../validators/service/async-validator.service';
 import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
 import { Editor, Toolbar } from 'ngx-editor';
-
 @Component({
   selector: 'app-task-modal',
   templateUrl: './task-modal.component.html',
-  styleUrls: ['./task-modal.component.scss']
+  styleUrls: ['./task-modal.component.scss'],
 })
 export class TaskModalComponent implements OnInit, OnDestroy {
   isAssignFormOpen: boolean = false;
   isEditable: boolean = false;
   isOwner!: boolean;
+  isEmojiPicker: boolean = false;
   openDescriptionFormToggle: boolean = false;
 
   assignedUsers: string[] = [];
@@ -32,23 +32,19 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   selectedColumn!: IColumn;
   selectedTask!: ITask;
 
-  // editor!: Editor;
-  // toolbar: Toolbar = [
-  //   ['bold', 'italic'],
-  //   ['underline', 'strike'],
-  //   ['code', 'blockquote'],
-  //   ['ordered_list', 'bullet_list'],
-  //   [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
-  //   ['link', 'image'],
-  //   ['text_color', 'background_color'],
-  //   ['align_left', 'align_center', 'align_right', 'align_justify'],
-  // ];
-  // html!: '';
+  editor!: Editor;
+  toolbar: Toolbar = [
+    ['bold', 'italic'],
+    ['underline', 'strike'],
+    ['code', 'blockquote'],
+    ['ordered_list', 'bullet_list'],
+    [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
+    ['text_color', 'background_color'],
+  ];
   
   @ViewChild('taskInput') _taskInput!: ElementRef;
-
-  description = new FormControl('', [Validators.maxLength(128)]);
-  commentForm = new FormControl('', [Validators.maxLength(64)]);
+  description = new FormControl('', [Validators.maxLength(512)]);
+  commentForm = new FormControl('', [Validators.maxLength(256)]);
   assigningTaskForm = new FormControl(
     '',
     [Validators.required],
@@ -65,7 +61,7 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // this.editor = new Editor();
+    this.editor = new Editor();
     this.afAuth.user.pipe(first()).subscribe((res) => {
       if (res) {
         this.username = res.displayName!;
@@ -143,6 +139,11 @@ export class TaskModalComponent implements OnInit, OnDestroy {
     this.openCloseDescriptionForm();
   }
 
+  addEmoji(event: any) {
+   const message = this.commentForm.value;
+   this.commentForm.patchValue(`${message}${event.emoji.native}`);
+  }
+
  addComment() {
     this.selectedTask.comments?.unshift({
       ownerName: this.username,
@@ -176,6 +177,7 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   }
 
   deleteAssignedUser(index: number) {
+    this.assignedUsers.splice(index, 1);
     this.selectedTask.assignedUsers?.splice(index, 1);
     this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
       columns: this.currentBoard.columns,
@@ -183,6 +185,6 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // this.editor.destroy();
+    this.editor.destroy();
   }
 }
