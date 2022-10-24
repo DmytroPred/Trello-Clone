@@ -1,14 +1,14 @@
 <div class="container">
     <mat-card>
-        <mat-toolbar color="primary" class="bg-dark"> Hello {{ user?.username }} </mat-toolbar>
+        <mat-toolbar color="primary" class="bg-dark"> Hello {{ (user | async)?.username }} </mat-toolbar>
         <div class="user-info">
             <article>
                 <h2>Name</h2>
-                <p>{{ user?.username }}</p>
+                <p>{{ (user | async)?.username }}</p>
             </article>
             <article>
                 <h2>Email</h2>
-                <p>{{ user?.email }}</p>
+                <p>{{ (user | async)?.email }}</p>
             </article>
         </div>
         <mat-card-actions align="end">
