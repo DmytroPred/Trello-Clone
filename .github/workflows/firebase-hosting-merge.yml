@@ -18,6 +18,3 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TRELLO_6448A }}'
           channelId: live
           projectId: trello-6448a
-env:
-  using: 'node16'
-  main: 'main.js'
