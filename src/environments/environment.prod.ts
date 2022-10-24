@@ -8,5 +8,6 @@ export const environment = {
     authDomain: 'trello-6448a.firebaseapp.com',
     messagingSenderId: '1045084962918',
   },
+  FIREBASE_TOKEN: '1//09v-CGtdumZDzCgYIARAAGAkSNwF-L9Irr1Zt0Yjt-AS-newJ3ODnlk-1XZ0qIxV0kT646M83RZKOOYnZ7LmY4AtYcQahzwuWm7E',
   production: true
 };

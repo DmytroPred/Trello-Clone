@@ -19,7 +19,7 @@
           [ngClass]="{
             owned: board?.ownerId === this.uid,
             invited:
-              board?.invitedUsers?.includes(this.currentUser.uid!) &&
+              board?.invitedUsers?.includes(this.uid) &&
               board?.ownerId !== this.uid
           }"
         >
