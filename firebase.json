@@ -7,7 +7,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "dist/Trello-clone",
+    "public": "dist/trello-clone",
     "ignore": [
       "firebase.json",
       "**/.*",
