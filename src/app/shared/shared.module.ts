@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { TaskModalComponent } from './components/task-modal/task-modal.component';
 import { MatIconModule } from '@angular/material/icon';
-// import { LettersAvatarModule } from 'ngx-letters-avatar';
+import { LettersAvatarModule } from 'ngx-letters-avatar';
 import { TimeagoModule} from 'ngx-timeago';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { NgxEditorModule } from 'ngx-editor';
@@ -37,7 +37,7 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
     MatButtonModule,
     MatIconModule,
     MatExpansionModule,
-    // LettersAvatarModule,
+    LettersAvatarModule,
     TimeagoModule,
     NgxEditorModule,
     EmojiModule,
