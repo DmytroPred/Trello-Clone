@@ -190,14 +190,14 @@
   >
     <div class="card-body">
       <div
-        class="form-outline mb-2"
-        style="background-color: #f0f2f5"
-        *ngIf="
-          this.selectedTask?.assignedUsers?.includes(
-            (this.currentUserService.currentUser$ | async)?.username!
-          ) || isOwner
-        "
-      >
+      class="form-outline mb-2"
+      style="background-color: #f0f2f5"
+      *ngIf="
+        this.selectedTask?.assignedUsers?.includes(
+          (this.currentUserService.currentUser$ | async)?.uid!
+        ) || isOwner
+      "
+    >
         <label class="form-label">Add comment</label>
       <div class="comment-section__input">
         <textarea

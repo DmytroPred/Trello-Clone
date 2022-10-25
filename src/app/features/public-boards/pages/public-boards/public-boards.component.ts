@@ -121,7 +121,7 @@ export class PublicBoardsComponent implements OnInit, OnDestroy {
     const restBoards: IBoard[] = [];
 
     this.boards.map((board) =>
-      board.invitedUsers?.includes(this.currentUser.username)
+      board.invitedUsers?.includes(this.currentUser.uid)
         ? invitedToBoards.push(board)
         : restBoards.push(board)
     );
