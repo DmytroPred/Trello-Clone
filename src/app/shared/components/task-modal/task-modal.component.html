@@ -234,14 +234,14 @@
             <div [innerHTML]="comment.text"></div>
             <div class="d-flex justify-content-between">
               <div class="d-flex flex-row align-items-center">
-                <ngx-letters-avatar
-                  [avatarName]="comment.ownerName!"
-                  [width]="40"
-                  [circular]="true"
-                  font
-                  family="Open Sans"
+                <rb-letter-avatar 
+                  [avatar-data]="comment.ownerName!"
+                  avatar-width="40px"
+                  avatar-height="40px"
+                  avatar-font-size="12px"
+                  avatar-shape="round"
                 >
-                </ngx-letters-avatar>
+                </rb-letter-avatar>
                 <p class="small mb-0 ms-2">
                   {{ comment.ownerName }}
                 </p>
