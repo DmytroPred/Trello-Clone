@@ -27,6 +27,7 @@
     "firebase": "^9.9.0",
     "ngx-editor": "^15.0.1",
     "ngx-owl-carousel-o": "^14.0.1",
+    "ngx-pagination": "^6.0.2",
     "ngx-timeago": "^2.0.0",
     "rb-letter-avatar": "^2.0.0",
     "rxjs": "~7.5.7",

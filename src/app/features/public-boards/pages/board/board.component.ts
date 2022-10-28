@@ -76,18 +76,6 @@ export class PubBoardComponent implements OnInit {
       }
     });
 
-    // this.boardFirebaseService
-    //   .getPublicBoard(this.boardId)
-    //   .pipe(first())
-    //   .subscribe((res) => {
-    //     if (res) {
-    //       this.currentBoard = res as IBoard;
-    //       this.uid === this.currentBoard.ownerId
-    //         ? (this.isOwner = true)
-    //         : (this.isOwner = false);
-    //     } else console.log('Something goes wrong');
-    //   });
-
     this.boardFirebaseService
     .getPublicBoard(this.boardId)
     .pipe(first())
@@ -98,7 +86,10 @@ export class PubBoardComponent implements OnInit {
           ? (this.isOwner = true)
           : (this.isOwner = false);
           
-        this.currentBoard.invitedUsers?.map(uid => this.userFirebaseService.getUserDocById(uid).pipe(first()).subscribe(user => this.invitedUsersNames.push(user.username)));
+        this.currentBoard.invitedUsers?.map(uid => this.userFirebaseService
+          .getUserDocById(uid)
+          .pipe(first())
+          .subscribe(user => this.invitedUsersNames.push(user?.username)));
       } else console.log('Something goes wrong');
     });
   }
@@ -240,14 +231,6 @@ export class PubBoardComponent implements OnInit {
     });
   }
 
-  // inviteUserToBoard() {
-  //   this.currentBoard.invitedUsers?.push(this.username.value!);
-  //   this.boardFirebaseService.updatePublicBoard(this.boardId, {
-  //     invitedUsers: this.currentBoard.invitedUsers,
-  //   });
-
-  //   this.username.reset();
-  // }
   inviteUserToBoard() {
     this.userFirebaseService.getUserWhere('username', '==', this.username.value!)
       .pipe(first())

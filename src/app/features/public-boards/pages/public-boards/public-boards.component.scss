@@ -1,4 +1,10 @@
 @import 'src/assets/styles/_animations';
+
+:host ::ng-deep .ngx-pagination {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
 .main-container {
   margin: 2vw 2vw 0vw 2vw;
   .list-container {
@@ -23,6 +29,9 @@
   flex-wrap: wrap;
   gap: 1em;
   margin-bottom: 1em;
+  input {
+    width: 220px;
+  }
   button {
     width: 160px;
   }

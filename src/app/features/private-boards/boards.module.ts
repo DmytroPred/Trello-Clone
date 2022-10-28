@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { BoardComponent } from './pages/board/board.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatIconModule } from '@angular/material/icon';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatIconModule,
     DragDropModule,
+    NgxPaginationModule
   ],
   providers: [],
 })

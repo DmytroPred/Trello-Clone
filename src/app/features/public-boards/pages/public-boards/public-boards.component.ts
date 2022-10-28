@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { IBoard } from 'src/app/core/models/Board';
 import { AddBoardModalComponent } from '../../../../shared/components/add-board-modal/add-board-modal.component';
-
 import { switchMap, Subscription, first } from 'rxjs';
 import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
 import { IUser } from 'src/app/core/models/User';
@@ -16,11 +15,12 @@ import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmat
 })
 export class PublicBoardsComponent implements OnInit, OnDestroy {
   currentUser!: IUser;
-
   subscription!: Subscription;
   boards!: IBoard[];
 
   uid!: string;
+  searchValue!: string;
+  page: number = 1;
 
   constructor(
     private boardFirebaseService: BoardFirebaseService,
@@ -28,6 +28,12 @@ export class PublicBoardsComponent implements OnInit, OnDestroy {
     public dialog: MatDialog
   ) {}
 
+  onSearch() {
+    this.subscription = this.boardFirebaseService.getSortedPublicBoards('boardId')
+    .subscribe(boards => this.boards = boards
+      .filter(board => board.name!
+        .includes(this.searchValue)));
+  }
   ngOnInit(): void {
     this.currentUserService.currentUser$
       .pipe(first())

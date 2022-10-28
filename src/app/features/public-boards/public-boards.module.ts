@@ -11,6 +11,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PubBoardComponent } from './pages/board/board.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatButtonModule,
     MatExpansionModule,
     DragDropModule,
+    NgxPaginationModule
   ]
 })
 export class PublicBoardsModule { }
