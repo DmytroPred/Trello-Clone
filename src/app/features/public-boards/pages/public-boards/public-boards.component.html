@@ -1,19 +1,21 @@
 <div class="main-container">
   <h3>Public Workspaces</h3>
-  <div class="sort-buttons" *ngIf="this.currentUserService.isUserLoggedIn$ | async">
-    <button mat-raised-button color="primary" (click)="sortByUserBoards()">
-      sort by your
-    </button>
-    <button mat-raised-button color="primary" (click)="sortByBoardsInvitedTo()">
-      sort by invited to
-    </button>
-    <button mat-raised-button color="primary" (click)="sortByCreationTime()">
-      sort by creation time
-    </button>
+    <!-- <input type="text" placeholder="Search" class="form-control" [(ngModel)]="searchValue" (ngModelChange)="onSearch()"> -->
+    <div class="sort-buttons" *ngIf="this.currentUserService.isUserLoggedIn$ | async">
+      <input type="text" placeholder="Search" class="form-control" [(ngModel)]="searchValue" (ngModelChange)="onSearch()">
+      <button mat-raised-button color="primary" (click)="sortByUserBoards()">
+        sort by your
+      </button>
+      <button mat-raised-button color="primary" (click)="sortByBoardsInvitedTo()">
+        sort by invited to
+      </button>
+      <button mat-raised-button color="primary" (click)="sortByCreationTime()">
+        sort by creation time
+      </button>
   </div>
   <div class="list-container">
     <ul class="boards-list">
-      <li *ngFor="let board of boards; let i = index">
+      <li *ngFor="let board of boards | paginate: {itemsPerPage: 11, currentPage: page}; let i = index">
         <div
           class="board-tile"
           [ngClass]="{
@@ -47,4 +49,5 @@
       </li>
     </ul>
   </div>
+  <pagination-controls (pageChange)="page = $event"></pagination-controls>
 </div>
