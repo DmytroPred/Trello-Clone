@@ -18,7 +18,7 @@
                 <input matInput formControlName="email" type="email" />
                 <mat-error *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
                     >{{ getNameErrorMessage('email') }}
-                    <span *ngIf="profileForm.controls['email'].errors?.['emailExist']">Email already exist</span>
+                    <span *ngIf="profileForm.controls['email'].errors?.['emailExists']">Email already exist</span>
                 </mat-error>
             </mat-form-field>
             <mat-form-field appearance="fill">

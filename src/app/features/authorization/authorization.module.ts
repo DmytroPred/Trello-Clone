@@ -11,12 +11,14 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { GoogleLoginButtonComponent } from 'src/app/shared/components/google-login-button/google-login-button.component';
 
 
 @NgModule({
   declarations: [
     LoginComponent,
     SignupComponent,
+    GoogleLoginButtonComponent
   ],
   imports: [
     CommonModule,

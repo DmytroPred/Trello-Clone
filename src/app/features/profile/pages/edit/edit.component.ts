@@ -88,7 +88,7 @@ export class EditComponent implements OnInit {
     emailValidator(): AsyncValidatorFn {
         return (control: AbstractControl): Observable<ValidationErrors | null> => {
             if (control.value === this.user.email) return of(null);
-            return this.userFirebaseService.getUserWhere('username', '==', control.value).pipe(
+            return this.userFirebaseService.getUserWhere('email', '==', control.value).pipe(
                 first(),
                 map((res) => (res.length ? { emailExists: true } : null))
             );

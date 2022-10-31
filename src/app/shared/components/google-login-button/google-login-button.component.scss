@@ -1,0 +1,22 @@
+.google {
+    width: 180px;
+    &__button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+        padding: 0 12px;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+    }
+    &__logo {
+        height: 18px;
+        width: 18px;
+        margin-right: 8px;
+    }
+    &__text {
+        font-family: "Google Sans",arial,sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+    }
+}

@@ -11,7 +11,7 @@
                 <p>{{ (user | async)?.email }}</p>
             </article>
         </div>
-        <mat-card-actions align="end">
+        <mat-card-actions align="end" *ngIf="this.currentUserService.loginWith$.value !== 'google.com'">
             <button routerLink="edit" mat-button>Edit</button>
         </mat-card-actions>
     </mat-card>
