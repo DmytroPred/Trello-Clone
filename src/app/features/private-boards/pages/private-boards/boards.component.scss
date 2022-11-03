@@ -1,4 +1,5 @@
 @import 'src/assets/styles/_animations';
+@import 'src/assets/styles/_variables';
 
 :host ::ng-deep .ngx-pagination {
   margin-top: 1.5rem;
@@ -12,7 +13,7 @@
     max-width: 1000px;
   }
   h3 {
-    color: rgb(151, 146, 146);
+    color: $grey-header-color;
     text-align: center;
   }
 }

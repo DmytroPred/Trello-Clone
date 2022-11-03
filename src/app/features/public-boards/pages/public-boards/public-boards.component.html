@@ -1,6 +1,5 @@
 <div class="main-container">
   <h3>Public Workspaces</h3>
-    <!-- <input type="text" placeholder="Search" class="form-control" [(ngModel)]="searchValue" (ngModelChange)="onSearch()"> -->
     <div class="sort-buttons" *ngIf="this.currentUserService.isUserLoggedIn$ | async">
       <input type="text" placeholder="Search" class="form-control" [(ngModel)]="searchValue" (ngModelChange)="onSearch()">
       <button mat-raised-button color="primary" (click)="sortByUserBoards()">

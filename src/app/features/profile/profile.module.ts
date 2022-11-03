@@ -12,6 +12,8 @@ import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { AvatarModule } from 'ngx-avatar';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     MatInputModule,
     MatIconModule,
     ReactiveFormsModule,
+    HttpClientModule,
+    AvatarModule,
     SharedModule,
   ]
 })

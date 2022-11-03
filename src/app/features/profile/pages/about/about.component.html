@@ -1,15 +1,12 @@
 <div class="container">
-    <mat-card>
-        <mat-toolbar color="primary" class="bg-dark"> Hello {{ (user | async)?.username }} </mat-toolbar>
+    <mat-card class="card text-white">
+        <img mat-card-image class="avatar" [src]="imageUrl | async" *ngIf="this.currentUserService.loginWith$.value !== 'google.com' && (this.imageUrl | async)">
+        <ngx-avatar class="d-flex justify-content-center" [name]="(user | async)?.username" size="100" [round]="true" *ngIf="this.currentUserService.loginWith$.value === 'google.com'">
+        </ngx-avatar>
+        <mat-toolbar color="primary"> Hello {{ (user | async)?.username }} </mat-toolbar>
         <div class="user-info">
-            <article>
-                <h2>Name</h2>
-                <p>{{ (user | async)?.username }}</p>
-            </article>
-            <article>
-                <h2>Email</h2>
-                <p>{{ (user | async)?.email }}</p>
-            </article>
+            <p>{{ (user | async)?.username }}</p>
+            <p>{{ (user | async)?.email }}</p>
         </div>
         <mat-card-actions align="end" *ngIf="this.currentUserService.loginWith$.value !== 'google.com'">
             <button routerLink="edit" mat-button>Edit</button>

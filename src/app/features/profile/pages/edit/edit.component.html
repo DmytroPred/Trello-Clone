@@ -1,7 +1,9 @@
 <app-load-spinner *ngIf="isLoading"></app-load-spinner>
 <div class="container">
     <mat-card>
-        <mat-toolbar color="primary" class="bg-dark">Edit Profile</mat-toolbar>
+        <mat-toolbar color="primary" class="bg-dark justify-content-between">Edit Profile
+            <app-file-upload [user]="user"></app-file-upload>
+        </mat-toolbar>
         <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="user-info">
             <mat-form-field appearance="fill">
                 <mat-label>Username</mat-label>

@@ -17,7 +17,8 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
 import { NgxEditorModule } from 'ngx-editor';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
-
+import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
     AddBoardModalComponent,
     TaskModalComponent,
     ConfirmationDialogComponent,
+    FileUploadComponent,
   ],
   imports: [
     CommonModule,
@@ -41,8 +43,9 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
     TimeagoModule,
     NgxEditorModule,
     EmojiModule,
-    PickerModule
+    PickerModule,
+    MatTooltipModule,
   ],
-  exports: [LoadSpinnerComponent]
+  exports: [LoadSpinnerComponent, FileUploadComponent]
 })
 export class SharedModule {}

@@ -1,0 +1,25 @@
+<input class="file-input d-none" 
+    type="file" 
+    accept="image/png, image/jpg, image/jpeg" 
+    (change)="onChange($event)" 
+    #fileUpload
+    >
+<div class="file-upload">
+    <button mat-raised-button 
+        class="confirmation-btn"
+        [matTooltip]="'Upload image ' + selectedFileName" 
+        color="primary" 
+        (click)="onUpload()" 
+        [ngStyle]="{ 'display': !(fileUploadService.isFileSelected$ | async) ? 'none' : 'inline-block' }"
+        >
+        Upload
+    </button>
+    <button mat-mini-fab 
+        class="upload-btn" 
+        [matTooltip]="(fileUploadService.isFileSelected$ | async) ? selectedFileName : 'Upload avatar'" 
+        [color]="(fileUploadService.isFileSelected$ | async) ? 'warn' : 'primary'" 
+        (click)="fileUpload.click()">
+        <mat-icon>attach_file</mat-icon>
+    </button>
+</div>
+<app-load-spinner *ngIf="isLoading"></app-load-spinner>

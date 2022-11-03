@@ -25,6 +25,7 @@
     "autoprefixer": "10.4.12",
     "bootstrap": "^5.2.2",
     "firebase": "^9.9.0",
+    "ngx-avatar": "^4.1.0",
     "ngx-editor": "^15.0.1",
     "ngx-owl-carousel-o": "^14.0.1",
     "ngx-pagination": "^6.0.2",

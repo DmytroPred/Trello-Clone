@@ -7,5 +7,6 @@ export interface IUser {
   username: string,
   password: string,
   assignedTasks: ITask[],
-  boards?: IBoard[]
+  boards?: IBoard[],
+  profileImageName?: string
 }

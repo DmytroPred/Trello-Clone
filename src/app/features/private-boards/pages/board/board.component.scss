@@ -1,6 +1,5 @@
 @import 'src/assets/styles/_animations';
-$grey-background-color: #5e6c84;
-$hover-background-color: rgba(94, 108, 132, 0.1);
+@import 'src/assets/styles/_variables';
 
 .columns {
   height: 87vh;
@@ -29,7 +28,7 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
     height: 100%;
     border-radius: 3px;
     .columns__add-new__column-btn {
-      background-color: #ebecf0;
+      background-color: $white-grey-background-color;
       border-radius: 3px;
       a {
         display: block;
@@ -67,7 +66,7 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
     width: 272px;
     display: flex;
     flex-direction: column;
-    background-color: #ebecf0;
+    background-color: $white-grey-background-color;
     max-height: 100%;
     border-radius: 3px;
     position: relative;

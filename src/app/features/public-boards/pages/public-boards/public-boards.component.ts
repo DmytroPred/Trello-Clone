@@ -31,8 +31,8 @@ export class PublicBoardsComponent implements OnInit, OnDestroy {
   onSearch() {
     this.subscription = this.boardFirebaseService.getSortedPublicBoards('boardId')
     .subscribe(boards => this.boards = boards
-      .filter(board => board.name!
-        .includes(this.searchValue)));
+      .filter(board => board.name!.toLowerCase()
+        .includes(this.searchValue.toLowerCase())));
   }
   ngOnInit(): void {
     this.currentUserService.currentUser$

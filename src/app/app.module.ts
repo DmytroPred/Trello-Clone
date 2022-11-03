@@ -14,6 +14,7 @@ import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 
 import { TimeagoModule } from 'ngx-timeago';
 import { MainPageModule } from './features/main/main.module';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { MainPageModule } from './features/main/main.module';
     BrowserAnimationsModule,
     AppRoutingModule,
     MainPageModule,
+    MatSnackBarModule,
     TimeagoModule.forChild(),
 
     provideFirebaseApp(() => initializeApp(environment.firebase)),
