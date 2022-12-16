@@ -30,6 +30,7 @@ export class BoardFirebaseService {
       .collection('boards', (ref) => ref.orderBy(orderByField))
       .valueChanges();
   }
+
   getSortedPublicBoards(orderByField: string): Observable<IBoard[]> {
     return this.angularFirestore
       .collection('boards', (ref) => ref.orderBy(orderByField))
@@ -48,6 +49,7 @@ export class BoardFirebaseService {
       .doc(`board${createdBoardId}`)
       .set(createdBoard);
   }
+
   setPublicBoard(createdBoardId: number, createdBoard: IBoard): Promise<void> {
     return this.angularFirestore
       .collection('boards')
@@ -64,6 +66,7 @@ export class BoardFirebaseService {
       .doc(`user/${userId}/boards/board${boardId}`)
       .update(data);
   }
+
   updatePublicBoard(boardId: number, data: IBoard): Promise<void> {
     return this.angularFirestore.doc(`boards/board${boardId}`).update(data);
   }
@@ -73,6 +76,7 @@ export class BoardFirebaseService {
       .doc(`user/${userId}/boards/board${boardId}`)
       .delete();
   }
+  
   deletePublicBoard(boardId: number): Promise<void> {
     return this.angularFirestore.doc(`boards/board${boardId}`).delete();
   }

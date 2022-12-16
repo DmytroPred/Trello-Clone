@@ -23,10 +23,12 @@ export class AboutComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.user = this.currentUserService.currentUser$;
-    this.subscription = this.user.pipe(map(curUser => this.imageName.next(curUser.profileImageName!)))
+    if(this.user) {
+      this.subscription = this.user.pipe(map(curUser => this.imageName.next(curUser.profileImageName!)))
       .subscribe(() => this.imageUrl = this.angularFireStorage
         .ref(`images/${this.imageName.getValue()}`)
         .getDownloadURL());
+    }
   }
 
   toEdit() {
@@ -34,6 +36,8 @@ export class AboutComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy () {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }
