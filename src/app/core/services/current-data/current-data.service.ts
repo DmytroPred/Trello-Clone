@@ -16,10 +16,14 @@ export class CurrentDataService {
   constructor() { 
     this._currentBoard = new BehaviorSubject<IBoard>({});
     this._currentColumn = new BehaviorSubject<IColumn>({});
-    this._currentTask = new BehaviorSubject<ITask>({});
+    this._currentTask = new BehaviorSubject<ITask>({comments: []});
   }
 
-  changeBehaviorSubjectValue(behSubject: BehaviorSubject<IBoard | IColumn | ITask>, nextValue: IBoard | IColumn | ITask) {
+  changeBehaviorSubjectValue(behSubject: BehaviorSubject<IBoard | IColumn>, nextValue: IBoard | IColumn) {
+    behSubject.next(nextValue);
+  }
+
+  changeTaskSubjectValue(behSubject: BehaviorSubject<ITask>, nextValue: ITask) {
     behSubject.next(nextValue);
   }
 }

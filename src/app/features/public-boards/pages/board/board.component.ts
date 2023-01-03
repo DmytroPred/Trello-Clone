@@ -218,10 +218,10 @@ export class PubBoardComponent implements OnInit {
       this.currentBoard.columns?.[clickedColumnIndex]!
     );
 
-    this.currentDataService.changeBehaviorSubjectValue(
+    this.currentDataService.changeTaskSubjectValue(
       this.currentDataService._currentTask,
       this.currentBoard.columns?.[clickedColumnIndex].tasks?.[clickedTaskIndex]!
-    );
+    )
 
     this.dialog.open(TaskModalComponent, {
       width: '95vw',

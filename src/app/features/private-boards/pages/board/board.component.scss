@@ -7,8 +7,12 @@
   white-space: nowrap;
   padding: 1em 0.5em 0 0.5em;
   .list-wrapper__list__header {
+    align-items: center;
     .delete-button, .add-button {
-      min-width: 32px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 8px;
+      line-height: inherit;
     }
     .delete-button {       
       opacity: 0;

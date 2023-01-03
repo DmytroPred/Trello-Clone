@@ -28,6 +28,8 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   username!: string;
   initTaskName!: string;
 
+  page: number = 1;
+
   currentBoard!: IBoard;
   selectedColumn!: IColumn;
   selectedTask!: ITask;
@@ -123,7 +125,7 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   saveDescription() {
     this.selectedTask.text = this.description.value!;
 
-    // Save changed description on server
+    // Save changed description
     if (this.currentBoard.isPublic) {
       this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
         columns: this.currentBoard.columns,

@@ -228,33 +228,36 @@
           </button>
         </div>
       </div>
-      <div *ngFor="let comment of this.selectedTask.comments">
-        <div class="card mb-4">
-          <div class="card-body">
-            <div [innerHTML]="comment.text"></div>
-            <div class="d-flex justify-content-between">
-              <div class="d-flex flex-row align-items-center">
-                <rb-letter-avatar 
-                  [avatar-data]="comment.ownerName!"
-                  avatar-width="40px"
-                  avatar-height="40px"
-                  avatar-font-size="12px"
-                  avatar-shape="round"
-                >
-                </rb-letter-avatar>
-                <p class="small mb-0 ms-2">
-                  {{ comment.ownerName }}
-                </p>
-              </div>
-              <div class="d-flex flex-row align-items-center">
-                <p class="small text-muted mb-0" style="margin-right: 11px">
-                  {{ comment.creationDate | timeago }}
-                </p>
+      <ul class="px-0">
+        <div *ngFor="let comment of this.selectedTask.comments | paginate: {itemsPerPage: 7, currentPage: page}; let i = index">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="card-body_text" [innerHTML]="comment.text"></div>
+              <div class="d-flex justify-content-between">
+                <div class="d-flex flex-row align-items-center">
+                  <rb-letter-avatar 
+                    [avatar-data]="comment.ownerName!"
+                    avatar-width="40px"
+                    avatar-height="40px"
+                    avatar-font-size="12px"
+                    avatar-shape="round"
+                  >
+                  </rb-letter-avatar>
+                  <p class="small mb-0 ms-2">
+                    {{ comment.ownerName }}
+                  </p>
+                </div>
+                <div class="d-flex flex-row align-items-center">
+                  <p class="small text-muted mb-0" style="margin-right: 11px">
+                    {{ comment.creationDate | timeago }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </ul>
+      <pagination-controls (pageChange)="page = $event"></pagination-controls>
     </div>
   </div>
 </div>

@@ -1,8 +1,12 @@
 <div class="container">
-    <mat-card class="card text-white" *ngIf="user | async">
-        <img mat-card-image class="avatar" [src]="imageUrl | async" *ngIf="this.currentUserService.loginWith$.value !== 'google.com' && (this.imageUrl | async)">
-        <ngx-avatar class="d-flex justify-content-center" [name]="(user | async)?.username" size="100" [round]="true" *ngIf="this.currentUserService.loginWith$.value === 'google.com'">
-        </ngx-avatar>
+    <mat-card class="card text-white bg-dark" *ngIf="user | async">
+        <div style="height:180px" *ngIf="this.currentUserService.loginWith$.value !== 'google.com'; else ngxAvatar">
+            <img mat-card-image class="avatar" [src]="imageUrl | async">
+        </div>
+        <ng-template #ngxAvatar>
+            <ngx-avatar class="d-flex justify-content-center" [name]="(user | async)?.username" size="100" [round]="true">
+            </ngx-avatar>
+        </ng-template>
         <mat-toolbar color="primary"> Hello {{ (user | async)?.username }} </mat-toolbar>
         <div class="user-info">
             <p>{{ (user | async)?.username }}</p>

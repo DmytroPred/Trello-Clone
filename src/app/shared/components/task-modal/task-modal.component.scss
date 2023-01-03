@@ -1,6 +1,14 @@
 $grey-background-color: #5e6c84;
 $hover-background-color: rgba(94, 108, 132, 0.1);
 
+:host ::ng-deep .ngx-pagination {
+  margin-top: 1.5rem;
+  text-align: center;
+  a {
+    text-decoration: none!important;
+  }
+}
+
 ::ng-deep .cdk-global-overlay-wrapper ::-webkit-scrollbar {
   width: 5px;
   overflow-y: scroll;
@@ -24,11 +32,6 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
 }
 
 .window {
-  ngx-letters-avatar {
-    ::ng-deep img {
-      padding: 3px !important;
-    }
-  }
   .form-buttons {
     display: flex;
     flex-direction: row;
@@ -43,6 +46,9 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
   .card {
     position: unset;
     margin-top: 1.5rem;
+    &-body_text {
+      padding: 0 0 12px 36px;
+    }
   }
   .modal-close-button {
     ::ng-deep .mat-button-wrapper > * {

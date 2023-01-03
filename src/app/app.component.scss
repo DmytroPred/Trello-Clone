@@ -4,6 +4,14 @@
   min-height: 100%;
 }
 
+:host ::ng-deep .ngx-pagination {
+  margin-top: 1.5rem;
+  text-align: center;
+  a {
+    text-decoration: none!important;
+  }
+}
+
 .page-wrapper {
   display: flex;
   flex-direction: column;

@@ -5,5 +5,5 @@ export interface ITask {
   name?: string;
   text?: string;
   assignedUsers?: string[];
-  comments?: IComment[];
+  comments: IComment[];
 } 

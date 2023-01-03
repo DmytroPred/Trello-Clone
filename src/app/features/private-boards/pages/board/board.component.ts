@@ -141,6 +141,7 @@ export class BoardComponent implements OnInit {
       taskId: this.currentBoard.columns?.[columnId].tasks?.length!,
       name: this.taskName.value!,
       text: '',
+      comments: []
     });
 
     this.boardFirebaseService.updatePrivateBoard(this.uid!, this.boardId, {
@@ -162,10 +163,10 @@ export class BoardComponent implements OnInit {
       this.currentBoard.columns?.[clickedColumnIndex]!
     );
 
-    this.currentDataService.changeBehaviorSubjectValue(
+    this.currentDataService.changeTaskSubjectValue(
       this.currentDataService._currentTask,
       this.currentBoard.columns?.[clickedColumnIndex].tasks?.[clickedTaskIndex]!
-    );
+    )
 
     this.dialog.open(TaskModalComponent, {
       width: '95vw',

@@ -4,7 +4,7 @@
             <div class="d-flex">
                 <img src="../assets/icons/fox.png" class="container__logo"><b [ngStyle]="{'font-size': '24px', 'margin': '4px 0 0 4px'}">Foxxy</b>
             </div>
-            <p>
+            <p *ngIf="!(currentUserService.isUserLoggedIn$ | async)">
                 <a class="container__login" href="authorization/login">Log In</a>
             </p>
         </div>

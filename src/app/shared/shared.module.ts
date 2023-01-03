@@ -19,6 +19,7 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     EmojiModule,
     PickerModule,
     MatTooltipModule,
+    NgxPaginationModule
   ],
   exports: [LoadSpinnerComponent, FileUploadComponent]
 })
