@@ -20,6 +20,8 @@ export class PublicBoardsComponent implements OnInit, OnDestroy {
 
   uid!: string;
   searchValue!: string;
+
+  itemsPerPage: number = 11;
   page: number = 1;
 
   constructor(

@@ -28,6 +28,7 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   username!: string;
   initTaskName!: string;
 
+  itemsPerPage: number = 7;
   page: number = 1;
 
   currentBoard!: IBoard;
@@ -164,6 +165,14 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   openCloseForm() {
     this.isAssignFormOpen = !this.isAssignFormOpen;
     this.assigningTaskForm.reset();
+  }
+
+  deleteComment(index: number) {
+    this.selectedTask.comments.splice(index, 1);
+
+    this.boardFirebaseService.updatePublicBoard(this.currentBoard.boardId!, {
+      columns: this.currentBoard.columns,
+    });
   }
 
   assignTask() {

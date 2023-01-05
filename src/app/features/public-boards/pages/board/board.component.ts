@@ -18,7 +18,6 @@ import { TaskModalComponent } from 'src/app/shared/components/task-modal/task-mo
 import { CurrentDataService } from 'src/app/core/services/current-data/current-data.service';
 import { first } from 'rxjs';
 import { CurrentUserService } from 'src/app/core/services/current-user/current-user.service';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { BoardFirebaseService } from 'src/app/core/services/firebase-entities/board-firebase.service';
 import { AsyncValidatorService } from 'src/app/shared/validators/service/async-validator.service';
 import { ConfirmationDialogComponent } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -55,7 +54,6 @@ export class PubBoardComponent implements OnInit {
     [this.asyncValidatorService.usernameExistValidator('invite')]
   );
   constructor(
-    private afAuth: AngularFireAuth,
     private boardFirebaseService: BoardFirebaseService,
     public asyncValidatorService: AsyncValidatorService,
     public currentUserService: CurrentUserService,
@@ -70,9 +68,9 @@ export class PubBoardComponent implements OnInit {
       .pipe(first())
       .subscribe((params) => (this.boardId = params.id));
 
-    this.afAuth.user.pipe(first()).subscribe((res) => {
-      if (res) {
-        this.uid = res!.uid;
+    this.currentUserService.currentUser$.pipe(first()).subscribe((user) => {
+      if (user) {
+        this.uid = user.uid;
       }
     });
 
@@ -124,7 +122,6 @@ export class PubBoardComponent implements OnInit {
 
     if (this.isEditable) {
       setTimeout(() => {
-        console.log(this._inputElement.nativeElement.value);
         return this._inputElement.nativeElement.focus();
       }, 25);
     } else if (this.currentBoard.columns?.[index].name?.length! >= 3) {

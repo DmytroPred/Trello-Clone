@@ -2,7 +2,7 @@
   <h3>Your Workspaces</h3>
   <div class="list-container">
     <ul class="boards-list">
-      <li *ngFor="let board of boards | paginate: { itemsPerPage: 11, currentPage: page }; let i = index">
+      <li *ngFor="let board of boards | paginate: { itemsPerPage: itemsPerPage, currentPage: page }; let i = index">
         <div class="board-tile">
           <a [routerLink]="[board.name, board.boardId]"
             >{{ board.name }}
@@ -27,5 +27,5 @@
       </li>
     </ul>
   </div>
-  <pagination-controls (pageChange)="page = $event"></pagination-controls>
+  <pagination-controls *ngIf="this.boards?.length ?? 0 > itemsPerPage" (pageChange)="page = $event"></pagination-controls>
 </div>

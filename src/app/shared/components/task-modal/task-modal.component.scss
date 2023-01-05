@@ -46,8 +46,15 @@ $hover-background-color: rgba(94, 108, 132, 0.1);
   .card {
     position: unset;
     margin-top: 1.5rem;
-    &-body_text {
-      padding: 0 0 12px 36px;
+    &-body {
+      &_text {
+        padding: 0 0 12px 36px;
+      }
+      &_delete-button {
+        position: absolute;
+        right: 32px;
+        cursor: pointer;
+      }
     }
   }
   .modal-close-button {

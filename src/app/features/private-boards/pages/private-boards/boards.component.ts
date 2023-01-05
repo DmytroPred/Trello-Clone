@@ -16,6 +16,7 @@ export class BoardsComponent implements OnInit {
   subscription!: Subscription;
   boards!: IBoard[];
 
+  itemsPerPage: number = 11;
   page: number = 1;
   uid!: string;
 
